@@ -1,0 +1,31 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: rosecafe-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: rosecafe
+      POSTGRES_PASSWORD: rosecafe123
+      POSTGRES_DB: rosecafe
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: rose-cafe-app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: "postgresql://rosecafe:rosecafe123@db:5432/rosecafe?schema=public"
+      NEXT_PUBLIC_APP_URL: "http://localhost:3000"
+      NEXTAUTH_SECRET: "your-super-secret-key-change-in-production-123"
+    depends_on:
+      - db
+
+volumes:
+  pgdata:
