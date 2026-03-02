@@ -136,15 +136,15 @@ function MenuContent({ tableNumber }: { tableNumber: number }) {
                             <input
                                 type="text"
                                 placeholder={placeholder}
-                                style={{ backgroundColor: 'rgba(255,255,255,0.8)', border: '1px solid rgba(209,137,154,0.3)', color: '#9d3b54', fontSize: '15px' }}
+                                style={{ backgroundColor: 'rgba(255,255,255,0.8)', border: '1px solid rgba(209,137,154,0.3)', color: '#9d3b54', fontSize: '16px' /* 16px prevents iOS zoom */ }}
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
-                                className="w-full font-medium rounded-xl pr-10 pl-10 py-3 placeholder:text-[#d1899a] focus:outline-none focus:ring-2 focus:ring-[#d1899a]/30 transition-all"
+                                className="w-full font-medium rounded-xl pr-10 pl-10 py-3 placeholder:text-[#d1899a] focus:outline-none focus:ring-2 focus:ring-[#d1899a]/30 transition-all appearance-none shadow-sm"
                             />
                             {search && (
                                 <button
                                     onClick={() => setSearch("")}
-                                    className="absolute left-3 top-1/2 -translate-y-1/2 text-[#d1899a]/60 hover:text-[#9d3b54] p-0.5"
+                                    className="absolute left-3 top-1/2 -translate-y-1/2 text-[#d1899a]/60 hover:text-[#9d3b54] p-1.5 rounded-full active:bg-[#d1899a]/10 transition-colors"
                                 >
                                     <X className="w-4 h-4" />
                                 </button>
