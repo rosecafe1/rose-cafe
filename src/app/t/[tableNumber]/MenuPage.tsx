@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { CartProvider, useCart } from "@/lib/cart-context";
 import ItemDetailModal from "@/components/ItemDetailModal";
 import CartSheet from "@/components/CartSheet";
-import { Search, X } from "lucide-react";
+import { Search, X, Flower2 } from "lucide-react";
 
 interface MenuOption {
     id: string;
@@ -123,11 +123,19 @@ function MenuContent({ tableNumber }: { tableNumber: number }) {
                                 </div>
                             </div>
 
-                            <div className="w-24 h-24 rounded-full overflow-hidden shadow-warm border-2 border-white/60 mb-3" style={{ backgroundColor: '#FFF' }}>
+                            {/* Decorative Flowers */}
+                            <div className="absolute right-4 top-4 opacity-40">
+                                <Flower2 className="w-12 h-12" style={{ color: '#d1899a' }} strokeWidth={1.5} />
+                            </div>
+                            <div className="absolute left-4 top-16 opacity-40">
+                                <Flower2 className="w-10 h-10" style={{ color: '#d1899a' }} strokeWidth={1.5} />
+                            </div>
+
+                            <div className="w-24 h-24 rounded-full overflow-hidden shadow-warm border-2 border-white/60 mb-3 relative z-10" style={{ backgroundColor: '#FFF' }}>
                                 <img src="/images/logo.png" alt="Rose Cafe" className="w-full h-full object-cover" />
                             </div>
-                            <h1 className="text-2xl font-extrabold tracking-wide" style={{ color: '#9d3b54' }}>Rose Cafe</h1>
-                            <p className="text-sm font-semibold mt-1" style={{ color: '#d1899a' }}>روز كافيه · اطلب من طاولتك</p>
+                            <h1 className="text-2xl font-extrabold tracking-wide relative z-10" style={{ color: '#9d3b54' }}>Rose Cafe</h1>
+                            <p className="text-sm font-semibold mt-1 relative z-10" style={{ color: '#d1899a' }}>روز كافيه · اطلب من طاولتك</p>
                         </div>
 
                         {/* Search */}
