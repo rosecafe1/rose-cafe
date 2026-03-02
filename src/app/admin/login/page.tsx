@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Coffee, User, Lock, ArrowLeft, Loader2 } from "lucide-react";
 
 export default function AdminLoginPage() {
     const router = useRouter();
@@ -38,41 +39,58 @@ export default function AdminLoginPage() {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center p-6">
-            <div className="w-full max-w-sm">
-                <div className="text-center mb-8">
-                    <h1 className="text-3xl font-bold text-cafe-300 mb-2">☕ روز كافيه</h1>
-                    <p className="text-gray-500">لوحة التحكم</p>
+        <div className="admin-page flex items-center justify-center p-6 relative overflow-hidden">
+            {/* Decorative background elements */}
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                <div className="absolute -top-40 -right-40 w-96 h-96 rounded-full opacity-[0.03]" style={{ background: 'radial-gradient(circle, #C4886D, transparent)' }} />
+                <div className="absolute -bottom-40 -left-40 w-96 h-96 rounded-full opacity-[0.03]" style={{ background: 'radial-gradient(circle, #D4A76A, transparent)' }} />
+            </div>
+
+            <div className="w-full max-w-sm relative z-10">
+                {/* Logo Section */}
+                <div className="text-center mb-8 animate-fade-in">
+                    <div className="w-20 h-20 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-cafe-500 to-gold-500 flex items-center justify-center shadow-2xl shadow-cafe-500/20 animate-float">
+                        <Coffee className="w-10 h-10 text-white" />
+                    </div>
+                    <h1 className="text-2xl font-bold text-white mb-1">روز كافيه</h1>
+                    <p className="text-white/30 text-sm">لوحة التحكم</p>
                 </div>
 
-                <form onSubmit={handleSubmit} className="bg-[#1e2a45] rounded-2xl p-6 border border-cafe-800/20 space-y-4">
+                {/* Login Form */}
+                <form onSubmit={handleSubmit} className="card-admin p-6 space-y-5 animate-scale-in">
                     <div>
-                        <label className="block text-sm text-gray-400 mb-1">اسم المستخدم</label>
-                        <input
-                            type="text"
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
-                            required
-                            autoFocus
-                            className="w-full bg-[#16213e] border border-cafe-800/30 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-cafe-400"
-                            placeholder="admin"
-                        />
+                        <label className="block text-sm text-white/40 mb-2 font-medium">اسم المستخدم</label>
+                        <div className="relative">
+                            <User className="absolute right-3 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-white/20" />
+                            <input
+                                type="text"
+                                value={username}
+                                onChange={(e) => setUsername(e.target.value)}
+                                required
+                                autoFocus
+                                className="w-full bg-white/5 border border-white/10 rounded-xl pr-10 pl-4 py-3.5 text-white placeholder-white/20 focus:outline-none focus:border-cafe-400/50 focus:bg-white/8 transition-all text-sm"
+                                placeholder="admin"
+                            />
+                        </div>
                     </div>
 
                     <div>
-                        <label className="block text-sm text-gray-400 mb-1">كلمة المرور</label>
-                        <input
-                            type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required
-                            className="w-full bg-[#16213e] border border-cafe-800/30 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-cafe-400"
-                            placeholder="••••••"
-                        />
+                        <label className="block text-sm text-white/40 mb-2 font-medium">كلمة المرور</label>
+                        <div className="relative">
+                            <Lock className="absolute right-3 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-white/20" />
+                            <input
+                                type="password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                required
+                                className="w-full bg-white/5 border border-white/10 rounded-xl pr-10 pl-4 py-3.5 text-white placeholder-white/20 focus:outline-none focus:border-cafe-400/50 focus:bg-white/8 transition-all text-sm"
+                                placeholder="••••••"
+                            />
+                        </div>
                     </div>
 
                     {error && (
-                        <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-3 text-red-400 text-sm text-center">
+                        <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-3 text-red-400 text-sm text-center animate-scale-in">
                             {error}
                         </div>
                     )}
@@ -80,14 +98,26 @@ export default function AdminLoginPage() {
                     <button
                         type="submit"
                         disabled={loading}
-                        className={`w-full py-3 rounded-xl font-bold transition-all ${loading
-                                ? "bg-gray-700 text-gray-500"
-                                : "bg-cafe-500 text-white hover:bg-cafe-400 active:scale-[0.98]"
+                        className={`w-full py-3.5 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 ${loading
+                            ? "bg-white/5 text-white/20 cursor-not-allowed"
+                            : "bg-gradient-to-r from-cafe-500 to-gold-500 text-white shadow-lg shadow-cafe-500/20 hover:shadow-cafe-500/40 active:scale-[0.98]"
                             }`}
                     >
-                        {loading ? "جاري الدخول..." : "تسجيل الدخول"}
+                        {loading ? (
+                            <>
+                                <Loader2 className="w-4 h-4 animate-spin" />
+                                جاري الدخول...
+                            </>
+                        ) : (
+                            <>
+                                <ArrowLeft className="w-4 h-4" />
+                                تسجيل الدخول
+                            </>
+                        )}
                     </button>
                 </form>
+
+                <p className="text-center text-white/10 text-xs mt-6">Rose Cafe © 2026</p>
             </div>
         </div>
     );

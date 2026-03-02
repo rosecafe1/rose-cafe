@@ -3,15 +3,32 @@
 @tailwind utilities;
 
 @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&display=swap');
 
+/* ─── Premium Design System ─── */
 :root {
-  --bg-primary: #1a1a2e;
-  --bg-secondary: #16213e;
-  --bg-card: #1e2a45;
-  --text-primary: #f5f5f5;
-  --text-secondary: #a0aec0;
-  --accent: #ff8fa3;
-  --accent-light: #ffb3c1;
+  /* Warm rose-gold palette */
+  --bg-primary: #FDF6F0;
+  --bg-secondary: #FFF5EE;
+  --bg-card: rgba(255, 255, 255, 0.75);
+  --bg-glass: rgba(255, 255, 255, 0.55);
+  --text-primary: #3D2214;
+  --text-secondary: #8B6F5E;
+  --accent: #C4886D;
+  --accent-light: #E8B4A0;
+  --accent-gold: #D4A76A;
+  --accent-rose: #E88C9A;
+  --border-soft: rgba(196, 136, 109, 0.15);
+  --shadow-warm: 0 8px 32px rgba(196, 136, 109, 0.12);
+  --shadow-glow: 0 0 20px rgba(196, 136, 109, 0.15);
+
+  /* Admin dark theme */
+  --admin-bg: #0F0D15;
+  --admin-card: rgba(30, 25, 40, 0.85);
+  --admin-glass: rgba(40, 32, 55, 0.65);
+  --admin-border: rgba(196, 136, 109, 0.12);
+  --admin-text: #F0E8E0;
+  --admin-muted: #9B8A7E;
 }
 
 * {
@@ -29,20 +46,22 @@ body {
   background-color: var(--bg-primary);
   color: var(--text-primary);
   min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Scrollbar styling */
+/* ─── Premium Scrollbar ─── */
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 5px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--bg-secondary);
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--accent);
-  border-radius: 3px;
+  background: linear-gradient(180deg, var(--accent), var(--accent-gold));
+  border-radius: 10px;
 }
 
 .scrollbar-hide::-webkit-scrollbar {
@@ -54,6 +73,22 @@ body {
   scrollbar-width: none;
 }
 
+/* ─── Glassmorphism Utilities ─── */
+.glass {
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  background: var(--bg-glass);
+  border: 1px solid var(--border-soft);
+}
+
+.glass-dark {
+  backdrop-filter: blur(24px) saturate(200%);
+  -webkit-backdrop-filter: blur(24px) saturate(200%);
+  background: var(--admin-glass);
+  border: 1px solid var(--admin-border);
+}
+
+/* ─── Animations ─── */
 @keyframes slide-up {
   from {
     transform: translateY(100%);
@@ -67,5 +102,220 @@ body {
 }
 
 .animate-slide-up {
-  animation: slide-up 0.3s ease-out;
+  animation: slide-up 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.4s ease-out;
+}
+
+@keyframes pulse-glow {
+
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(196, 136, 109, 0.4);
+  }
+
+  50% {
+    box-shadow: 0 0 0 12px rgba(196, 136, 109, 0);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+@keyframes toast-enter {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-toast {
+  animation: toast-enter 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes toast-exit {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  to {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+}
+
+.animate-toast-exit {
+  animation: toast-exit 0.4s ease-in forwards;
+}
+
+@keyframes scale-in {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-scale-in {
+  animation: scale-in 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes bounce-in {
+  0% {
+    transform: scale(0.3);
+    opacity: 0;
+  }
+
+  50% {
+    transform: scale(1.05);
+  }
+
+  70% {
+    transform: scale(0.95);
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-bounce-in {
+  animation: bounce-in 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradient-shift 4s ease infinite;
+}
+
+/* ─── Premium Card Styles ─── */
+.card-premium {
+  background: var(--bg-card);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--border-soft);
+  border-radius: 1.25rem;
+  box-shadow: var(--shadow-warm);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.card-premium:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(196, 136, 109, 0.18);
+}
+
+.card-admin {
+  background: var(--admin-card);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--admin-border);
+  border-radius: 1.25rem;
+  transition: all 0.3s ease;
+}
+
+.card-admin:hover {
+  border-color: rgba(196, 136, 109, 0.25);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+/* ─── Premium Buttons ─── */
+.btn-premium {
+  background: linear-gradient(135deg, var(--accent), var(--accent-gold));
+  color: white;
+  font-weight: 700;
+  border: none;
+  border-radius: 0.875rem;
+  padding: 0.75rem 1.5rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 16px rgba(196, 136, 109, 0.25);
+}
+
+.btn-premium:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px rgba(196, 136, 109, 0.35);
+}
+
+.btn-premium:active {
+  transform: scale(0.97);
+}
+
+/* ─── Admin layout ─── */
+.admin-page {
+  background: var(--admin-bg);
+  background-image:
+    radial-gradient(ellipse at 20% 50%, rgba(196, 136, 109, 0.06) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, rgba(212, 167, 106, 0.04) 0%, transparent 50%);
+  min-height: 100vh;
+  color: var(--admin-text);
 }

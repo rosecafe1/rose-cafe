@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { CartProvider, useCart } from "@/lib/cart-context";
 import ItemDetailModal from "@/components/ItemDetailModal";
 import CartSheet from "@/components/CartSheet";
+import { Search, X } from "lucide-react";
 
 interface MenuOption {
     id: string;
@@ -78,51 +79,56 @@ function MenuContent({ tableNumber }: { tableNumber: number }) {
 
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center">
+            <div className="min-h-screen flex items-center justify-center" style={{ background: 'linear-gradient(180deg, #FDF6F0, #FCEEE8)' }}>
                 <div className="text-center">
-                    <div className="animate-spin w-12 h-12 border-4 border-cafe-300 border-t-transparent rounded-full mx-auto mb-4"></div>
-                    <p className="text-gray-400">جاري تحميل القائمة...</p>
+                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-cafe-500 to-gold-500 flex items-center justify-center mx-auto mb-4 animate-pulse shadow-warm-lg">
+                        <span className="text-3xl">☕</span>
+                    </div>
+                    <p className="text-cafe-500/50 text-sm font-medium">جاري تحميل القائمة...</p>
                 </div>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen flex justify-center" style={{ backgroundColor: '#FCEEE8', backgroundImage: 'url(/images/menu-bg.png)', backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }}>
-            <div className="w-full max-w-[600px] min-h-screen pb-24 relative shadow-2xl" style={{ backgroundColor: 'rgba(252,238,232,0.55)', borderLeft: '1px solid #F0D1C4', borderRight: '1px solid #F0D1C4' }}>
+        <div className="min-h-screen flex justify-center" style={{ background: 'linear-gradient(180deg, #FDF6F0 0%, #FCEEE8 30%, #FFF5EE 100%)' }}>
+            <div className="w-full max-w-[500px] min-h-screen pb-24 relative" style={{ borderLeft: '1px solid rgba(196,136,109,0.08)', borderRight: '1px solid rgba(196,136,109,0.08)' }}>
 
                 {/* Header */}
-                <header className="sticky top-0 z-40 backdrop-blur-md" style={{ backgroundColor: 'rgba(252,238,232,0.92)', borderBottom: '1px solid #F0D1C4' }}>
+                <header className="sticky top-0 z-40 glass" style={{ borderBottom: '1px solid rgba(196,136,109,0.1)' }}>
                     <div className="px-4 pt-4 pb-3">
                         <div className="flex items-center justify-between mb-3">
-                            <div className="flex items-center gap-2">
-                                <img src="/images/logo.jpg" alt="Rose Cafe" className="w-10 h-10 rounded-full" />
+                            <div className="flex items-center gap-2.5">
+                                <div className="w-11 h-11 rounded-xl overflow-hidden shadow-warm border border-white/40">
+                                    <img src="/images/logo.jpg" alt="Rose Cafe" className="w-full h-full object-cover" />
+                                </div>
                                 <div>
-                                    <h1 className="text-lg font-bold text-cafe-600">Rose Cafe</h1>
-                                    <p className="text-[10px] text-gray-500">روز كافيه · اطلب من طاولتك</p>
+                                    <h1 className="text-lg font-bold" style={{ color: '#3D2214' }}>Rose Cafe</h1>
+                                    <p className="text-[10px] font-medium" style={{ color: '#B08A75' }}>روز كافيه · اطلب من طاولتك</p>
                                 </div>
                             </div>
-                            <div className="text-white px-4 py-2 rounded-xl text-sm font-bold shadow-md" style={{ backgroundColor: '#C4886D', boxShadow: '0 4px 14px rgba(196,136,109,0.3)' }}>
+                            <div className="px-4 py-2 rounded-xl text-sm font-bold text-white shadow-warm" style={{ background: 'linear-gradient(135deg, #C4886D, #D4A76A)' }}>
                                 طاولة {tableNumber}
                             </div>
                         </div>
 
                         {/* Search */}
                         <div className="relative">
+                            <Search className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: '#C4886D' }} />
                             <input
                                 type="text"
-                                placeholder="🔍 ابحث عن صنف..."
+                                placeholder="ابحث عن صنف..."
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
-                                className="w-full rounded-xl px-4 py-2.5 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 transition-all shadow-sm"
-                                style={{ backgroundColor: '#FFF5F0', border: '1px solid #F0D1C4', outlineColor: '#C4886D' }}
+                                className="w-full rounded-xl pr-10 pl-10 py-2.5 text-sm placeholder-cafe-300/40 focus:outline-none focus:ring-2 focus:ring-cafe-300/30 transition-all"
+                                style={{ backgroundColor: 'rgba(255,255,255,0.7)', border: '1px solid rgba(196,136,109,0.12)', color: '#3D2214' }}
                             />
                             {search && (
                                 <button
                                     onClick={() => setSearch("")}
-                                    className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-cafe-500"
+                                    className="absolute left-3 top-1/2 -translate-y-1/2 text-cafe-300/50 hover:text-cafe-500 p-0.5"
                                 >
-                                    ✕
+                                    <X className="w-4 h-4" />
                                 </button>
                             )}
                         </div>
@@ -131,27 +137,30 @@ function MenuContent({ tableNumber }: { tableNumber: number }) {
 
                 {/* Categories with Items */}
                 <div className="px-3 mt-4 space-y-6 relative z-10">
-                    {filteredCategories.map((cat) => (
-                        <section key={cat.id} id={`cat-${cat.id}`}>
+                    {filteredCategories.map((cat, catIndex) => (
+                        <section key={cat.id} className="animate-fade-in" style={{ animationDelay: `${catIndex * 80}ms` }}>
                             {/* Category Header */}
                             <div className="flex items-center gap-2 mb-3 px-1">
                                 {cat.image && (cat.image.startsWith('http') || cat.image.startsWith('/')) ? (
-                                    <img src={cat.image} alt={cat.nameAr} className="w-8 h-8 rounded-full object-cover shadow-sm" />
+                                    <img src={cat.image} alt={cat.nameAr} className="w-8 h-8 rounded-full object-cover shadow-warm-sm border border-white/40" />
                                 ) : (
                                     <span className="text-xl">{cat.image}</span>
                                 )}
-                                <h2 className="text-base font-bold text-cafe-800">{cat.nameAr}</h2>
-                                <span className="text-xs text-gray-500">({cat.items.length})</span>
-                                <div className="flex-1 h-[1px] mr-2" style={{ backgroundColor: '#EDCABC' }}></div>
+                                <h2 className="text-base font-bold" style={{ color: '#3D2214' }}>{cat.nameAr}</h2>
+                                <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-full" style={{ color: '#B08A75', backgroundColor: 'rgba(196,136,109,0.08)' }}>
+                                    {cat.items.length}
+                                </span>
+                                <div className="flex-1 h-[1px] mr-2" style={{ background: 'linear-gradient(to left, transparent, rgba(196,136,109,0.15))' }}></div>
                             </div>
 
-                            {/* Items Grid - 3 columns */}
+                            {/* Items Grid */}
                             <div className="grid grid-cols-3 gap-2">
-                                {cat.items.map((item) => (
+                                {cat.items.map((item, itemIndex) => (
                                     <ProductCard
                                         key={item.id}
                                         item={item}
                                         onTap={() => setSelectedItem(item)}
+                                        delay={itemIndex * 40}
                                     />
                                 ))}
                             </div>
@@ -160,8 +169,8 @@ function MenuContent({ tableNumber }: { tableNumber: number }) {
 
                     {filteredCategories.length === 0 && (
                         <div className="text-center py-16">
-                            <p className="text-4xl mb-3">🔍</p>
-                            <p className="text-gray-400">لا توجد نتائج لـ &quot;{search}&quot;</p>
+                            <Search className="w-10 h-10 mx-auto mb-3" style={{ color: 'rgba(196,136,109,0.15)' }} />
+                            <p className="text-sm" style={{ color: '#B08A75' }}>لا توجد نتائج لـ &quot;{search}&quot;</p>
                         </div>
                     )}
                 </div>
@@ -178,7 +187,7 @@ function MenuContent({ tableNumber }: { tableNumber: number }) {
     );
 }
 
-function ProductCard({ item, onTap }: { item: MenuItem; onTap: () => void }) {
+function ProductCard({ item, onTap, delay }: { item: MenuItem; onTap: () => void; delay: number }) {
     const { addItem, items: cartItems, updateQuantity, removeItem } = useCart();
 
     const cartEntry = cartItems.find((ci) => ci.menuItemId === item.id);
@@ -187,10 +196,7 @@ function ProductCard({ item, onTap }: { item: MenuItem; onTap: () => void }) {
 
     const handleQuickAdd = (e: React.MouseEvent) => {
         e.stopPropagation();
-        if (hasOptions) {
-            onTap();
-            return;
-        }
+        if (hasOptions) { onTap(); return; }
         addItem({
             menuItemId: item.id,
             nameAr: item.nameAr,
@@ -208,46 +214,43 @@ function ProductCard({ item, onTap }: { item: MenuItem; onTap: () => void }) {
 
     const handleDecrement = (e: React.MouseEvent) => {
         e.stopPropagation();
-        if (cartEntry && cartQty > 1) {
-            updateQuantity(cartEntry.id, cartQty - 1);
-        } else if (cartEntry) {
-            removeItem(cartEntry.id);
-        }
+        if (cartEntry && cartQty > 1) updateQuantity(cartEntry.id, cartQty - 1);
+        else if (cartEntry) removeItem(cartEntry.id);
     };
 
     return (
         <div
             onClick={onTap}
-            className="rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all active:scale-[0.97] cursor-pointer flex flex-col relative"
-            style={{ backgroundColor: '#FFF8F4', border: '1px solid #F0D1C4' }}
+            className="card-premium overflow-hidden cursor-pointer flex flex-col relative animate-fade-in"
+            style={{ animationDelay: `${delay}ms`, padding: 0 }}
         >
             {/* Image Area */}
-            <div className="aspect-square relative overflow-hidden" style={{ backgroundColor: '#FCEEE8' }}>
+            <div className="aspect-square relative overflow-hidden" style={{ backgroundColor: '#FDF6F0' }}>
                 {item.image ? (
                     <img
                         src={item.image}
                         alt={item.nameAr}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
                         onError={(e) => {
                             (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1497935586351-b67a49e012bf?auto=format&fit=crop&q=80&w=800';
                         }}
                     />
                 ) : (
                     <div className="w-full h-full flex items-center justify-center">
-                        <span className="text-4xl opacity-50 grayscale">🌸</span>
+                        <span className="text-3xl opacity-30 grayscale">🌸</span>
                     </div>
                 )}
 
-                {/* Cart quantity badge */}
+                {/* Cart badge */}
                 {cartQty > 0 && (
-                    <div className="absolute top-2 right-2 bg-cafe-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shadow-lg">
+                    <div className="absolute top-1.5 right-1.5 w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold text-white shadow-lg animate-scale-in" style={{ background: 'linear-gradient(135deg, #C4886D, #D4A76A)' }}>
                         {cartQty}
                     </div>
                 )}
 
                 {/* Options badge */}
                 {hasOptions && (
-                    <div className="absolute top-2 left-2 backdrop-blur-sm px-1.5 py-0.5 rounded font-medium text-[9px] shadow-sm" style={{ backgroundColor: 'rgba(255,248,244,0.9)', color: '#9C6A50', border: '1px solid #F0D1C4' }}>
+                    <div className="absolute top-1.5 left-1.5 glass px-1.5 py-0.5 rounded-md text-[9px] font-bold" style={{ color: '#9C6A50' }}>
                         خيارات
                     </div>
                 )}
@@ -255,30 +258,30 @@ function ProductCard({ item, onTap }: { item: MenuItem; onTap: () => void }) {
 
             {/* Info */}
             <div className="p-2 flex-1 flex flex-col">
-                <h3 className="font-bold text-cafe-900 text-xs leading-tight line-clamp-2">{item.nameAr}</h3>
+                <h3 className="font-bold text-xs leading-tight line-clamp-2" style={{ color: '#3D2214' }}>{item.nameAr}</h3>
                 {item.descriptionAr && (
-                    <p className="text-gray-500 text-[10px] mt-0.5 line-clamp-1">{item.descriptionAr}</p>
+                    <p className="text-[10px] mt-0.5 line-clamp-1" style={{ color: '#B08A75' }}>{item.descriptionAr}</p>
                 )}
 
                 {/* Price + Add */}
                 <div className="flex items-center justify-between mt-auto pt-2">
-                    <span className="text-cafe-600 font-bold text-xs">
+                    <span className="font-bold text-xs" style={{ color: '#C4886D' }}>
                         {parseFloat(item.price).toFixed(0)} ₪
                     </span>
 
                     <div onClick={(e) => e.stopPropagation()}>
                         {cartQty > 0 && !hasOptions ? (
-                            <div className="flex items-center gap-1">
-                                <button onClick={handleDecrement} className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] active:scale-90 font-bold" style={{ backgroundColor: '#FBDCE0', color: '#B35565' }}>
+                            <div className="flex items-center gap-0.5">
+                                <button onClick={handleDecrement} className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] active:scale-90 font-bold transition-all" style={{ backgroundColor: '#FBDCE0', color: '#B35565' }}>
                                     −
                                 </button>
-                                <span className="text-cafe-800 font-bold text-[10px] w-3 text-center">{cartQty}</span>
-                                <button onClick={handleIncrement} className="w-5 h-5 rounded-full text-white flex items-center justify-center text-[10px] active:scale-90 font-bold" style={{ backgroundColor: '#E88C9A' }}>
+                                <span className="font-bold text-[10px] w-4 text-center" style={{ color: '#3D2214' }}>{cartQty}</span>
+                                <button onClick={handleIncrement} className="w-5 h-5 rounded-full text-white flex items-center justify-center text-[10px] active:scale-90 font-bold transition-all shadow-sm" style={{ background: 'linear-gradient(135deg, #E88C9A, #C4886D)' }}>
                                     +
                                 </button>
                             </div>
                         ) : (
-                            <button onClick={handleQuickAdd} className="w-6 h-6 rounded-full text-white flex items-center justify-center text-xs font-bold active:scale-90 transition-all shadow-md" style={{ backgroundColor: '#E88C9A', boxShadow: '0 4px 10px rgba(232,140,154,0.3)' }}>
+                            <button onClick={handleQuickAdd} className="w-6 h-6 rounded-full text-white flex items-center justify-center text-xs font-bold active:scale-90 transition-all shadow-md animate-pulse-glow" style={{ background: 'linear-gradient(135deg, #E88C9A, #C4886D)' }}>
                                 +
                             </button>
                         )}
