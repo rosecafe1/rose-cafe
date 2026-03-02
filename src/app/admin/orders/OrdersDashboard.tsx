@@ -115,10 +115,19 @@ export default function OrdersDashboard({ user }: Props) {
         setTimeout(() => setToasts(prev => prev.filter(t => t.id !== id)), 400);
     };
 
+    // AudioContext singleton to bypass gesture restrictions if created early
+    const audioCtxRef = useRef<AudioContext | null>(null);
+
     // Play premium notification sound
     const playNotificationSound = useCallback(() => {
         try {
-            const ctx = new AudioContext();
+            if (!audioCtxRef.current) {
+                audioCtxRef.current = new AudioContext();
+            }
+            const ctx = audioCtxRef.current;
+            if (ctx.state === 'suspended') {
+                ctx.resume();
+            }
             const now = ctx.currentTime;
 
             // First note (higher)
@@ -146,20 +155,15 @@ export default function OrdersDashboard({ user }: Props) {
         } catch { }
     }, []);
 
-    const fetchOrders = useCallback(async (isPolling = false) => {
-        if (!isPolling) setLoading(true);
+    const checkNewOrders = useCallback(async () => {
         try {
-            const res = await fetch(`/api/admin/orders?status=${activeTab}`);
-            if (res.status === 401) { router.push("/admin/login"); return; }
+            const res = await fetch(`/api/admin/orders?status=NEW`);
+            if (!res.ok) return;
             const data = await res.json();
-            const fetchedOrders = data.orders || [];
-            setOrders(fetchedOrders);
-            setConnected(true);
+            const newOrders = data.orders || [];
 
-            // If we're looking at NEW orders, check if the newest order has changed
-            if (activeTab === "NEW" && fetchedOrders.length > 0) {
-                const newestOrder = fetchedOrders[0];
-
+            if (newOrders.length > 0) {
+                const newestOrder = newOrders[0];
                 if (lastOrderIdRef.current !== null && newestOrder.id !== lastOrderIdRef.current) {
                     // We have a new latest order! Trigger notification
                     if (notificationsEnabled) {
@@ -175,33 +179,56 @@ export default function OrdersDashboard({ user }: Props) {
                                 requireInteraction: true,
                             });
                         }
-
                         showToast("طلب جديد!", tableNum);
                     }
                 }
                 lastOrderIdRef.current = newestOrder.id;
-            } else if (activeTab === "NEW" && fetchedOrders.length === 0) {
+            } else {
                 lastOrderIdRef.current = null;
             }
+        } catch (e) { }
+    }, [notificationsEnabled, playNotificationSound, showToast]);
+
+    const fetchOrders = useCallback(async (isPolling = false) => {
+        if (!isPolling) setLoading(true);
+        try {
+            const res = await fetch(`/api/admin/orders?status=${activeTab}`);
+            if (res.status === 401) { router.push("/admin/login"); return; }
+            const data = await res.json();
+            setOrders(data.orders || []);
+            setConnected(true);
         } catch (err) {
             console.error("Failed to fetch orders:", err);
             setConnected(false);
         }
         if (!isPolling) setLoading(false);
-    }, [activeTab, router, playNotificationSound, showToast]);
+    }, [activeTab, router]);
 
     // Polling setup for Vercel serverless environment
     useEffect(() => {
         // Fetch initially
         fetchOrders();
+        checkNewOrders();
 
         // Polling interval (every 10 seconds)
         const intervalId = setInterval(() => {
             fetchOrders(true);
+            checkNewOrders();
         }, 10000);
 
-        return () => clearInterval(intervalId);
-    }, [fetchOrders]);
+        const handleVisibilityChange = () => {
+            if (document.visibilityState === 'visible') {
+                fetchOrders(true);
+                checkNewOrders();
+            }
+        };
+        document.addEventListener("visibilitychange", handleVisibilityChange);
+
+        return () => {
+            clearInterval(intervalId);
+            document.removeEventListener("visibilitychange", handleVisibilityChange);
+        };
+    }, [fetchOrders, checkNewOrders]);
 
     const handleStatusChange = async (orderId: string, newStatus: string) => {
         try {
@@ -287,7 +314,16 @@ export default function OrdersDashboard({ user }: Props) {
                             </div>
                             <div className="flex items-center gap-1">
                                 <button
-                                    onClick={() => setNotificationsEnabled(!notificationsEnabled)}
+                                    onClick={() => {
+                                        setNotificationsEnabled(!notificationsEnabled);
+                                        // Initialize AudioContext on user gesture
+                                        if (!audioCtxRef.current) audioCtxRef.current = new AudioContext();
+                                        if (audioCtxRef.current.state === 'suspended') audioCtxRef.current.resume();
+                                        // Request permission if not granted
+                                        if ("Notification" in window && Notification.permission === "default") {
+                                            Notification.requestPermission();
+                                        }
+                                    }}
                                     className={`p-2.5 rounded-xl transition-all ${notificationsEnabled ? "text-emerald-400 hover:bg-emerald-400/10" : "text-gray-400 hover:bg-gray-500/10"}`}
                                     title={notificationsEnabled ? "إيقاف الإشعارات" : "تفعيل الإشعارات"}
                                 >
