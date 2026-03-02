@@ -91,8 +91,10 @@ function MenuContent({ tableNumber }: { tableNumber: number }) {
     }
 
     return (
-        <div className="min-h-screen flex justify-center" style={{ background: 'linear-gradient(180deg, #FDF6F0 0%, #FCEEE8 30%, #FFF5EE 100%)' }}>
-            <div className="w-full max-w-[500px] min-h-screen pb-24 relative" style={{ borderLeft: '1px solid rgba(196,136,109,0.08)', borderRight: '1px solid rgba(196,136,109,0.08)' }}>
+        <div className="min-h-screen flex justify-center relative" style={{ background: 'linear-gradient(180deg, #FDF6F0 0%, #FCEEE8 30%, #FFF5EE 100%)' }}>
+            {/* Background Image */}
+            <div className="fixed inset-0 z-0 pointer-events-none" style={{ backgroundImage: 'url(/images/menu-bg.png)', backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat', opacity: 0.08 }} />
+            <div className="w-full max-w-[600px] min-h-screen pb-24 relative z-10" style={{ borderLeft: '1px solid rgba(196,136,109,0.08)', borderRight: '1px solid rgba(196,136,109,0.08)' }}>
 
                 {/* Header */}
                 <header className="sticky top-0 z-40 glass" style={{ borderBottom: '1px solid rgba(196,136,109,0.1)' }}>
@@ -103,11 +105,11 @@ function MenuContent({ tableNumber }: { tableNumber: number }) {
                                     <img src="/images/logo.jpg" alt="Rose Cafe" className="w-full h-full object-cover" />
                                 </div>
                                 <div>
-                                    <h1 className="text-lg font-bold" style={{ color: '#3D2214' }}>Rose Cafe</h1>
-                                    <p className="text-[10px] font-medium" style={{ color: '#B08A75' }}>روز كافيه · اطلب من طاولتك</p>
+                                    <h1 className="text-xl font-extrabold" style={{ color: '#3D2214' }}>Rose Cafe</h1>
+                                    <p className="text-xs font-semibold" style={{ color: '#8B6F5E' }}>روز كافيه · اطلب من طاولتك</p>
                                 </div>
                             </div>
-                            <div className="px-4 py-2 rounded-xl text-sm font-bold text-white shadow-warm" style={{ background: 'linear-gradient(135deg, #C4886D, #D4A76A)' }}>
+                            <div className="px-4 py-2 rounded-xl text-base font-extrabold text-white shadow-warm" style={{ background: 'linear-gradient(135deg, #C4886D, #D4A76A)' }}>
                                 طاولة {tableNumber}
                             </div>
                         </div>
@@ -118,10 +120,10 @@ function MenuContent({ tableNumber }: { tableNumber: number }) {
                             <input
                                 type="text"
                                 placeholder="ابحث عن صنف..."
+                                style={{ backgroundColor: 'rgba(255,255,255,0.8)', border: '1px solid rgba(196,136,109,0.15)', color: '#3D2214', fontSize: '15px' }}
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
-                                className="w-full rounded-xl pr-10 pl-10 py-2.5 text-sm placeholder-cafe-300/40 focus:outline-none focus:ring-2 focus:ring-cafe-300/30 transition-all"
-                                style={{ backgroundColor: 'rgba(255,255,255,0.7)', border: '1px solid rgba(196,136,109,0.12)', color: '#3D2214' }}
+                                className="w-full rounded-xl pr-10 pl-10 py-3 placeholder-cafe-300/40 focus:outline-none focus:ring-2 focus:ring-cafe-300/30 transition-all"
                             />
                             {search && (
                                 <button
@@ -146,11 +148,11 @@ function MenuContent({ tableNumber }: { tableNumber: number }) {
                                 ) : (
                                     <span className="text-xl">{cat.image}</span>
                                 )}
-                                <h2 className="text-base font-bold" style={{ color: '#3D2214' }}>{cat.nameAr}</h2>
-                                <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-full" style={{ color: '#B08A75', backgroundColor: 'rgba(196,136,109,0.08)' }}>
+                                <h2 className="text-lg font-extrabold" style={{ color: '#3D2214' }}>{cat.nameAr}</h2>
+                                <span className="text-xs font-bold px-2 py-0.5 rounded-full" style={{ color: '#8B6F5E', backgroundColor: 'rgba(196,136,109,0.1)' }}>
                                     {cat.items.length}
                                 </span>
-                                <div className="flex-1 h-[1px] mr-2" style={{ background: 'linear-gradient(to left, transparent, rgba(196,136,109,0.15))' }}></div>
+                                <div className="flex-1 h-[1px] mr-2" style={{ background: 'linear-gradient(to left, transparent, rgba(196,136,109,0.2))' }}></div>
                             </div>
 
                             {/* Items Grid */}
@@ -243,45 +245,45 @@ function ProductCard({ item, onTap, delay }: { item: MenuItem; onTap: () => void
 
                 {/* Cart badge */}
                 {cartQty > 0 && (
-                    <div className="absolute top-1.5 right-1.5 w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold text-white shadow-lg animate-scale-in" style={{ background: 'linear-gradient(135deg, #C4886D, #D4A76A)' }}>
+                    <div className="absolute top-1.5 right-1.5 w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-white shadow-lg animate-scale-in" style={{ background: 'linear-gradient(135deg, #C4886D, #D4A76A)' }}>
                         {cartQty}
                     </div>
                 )}
 
                 {/* Options badge */}
                 {hasOptions && (
-                    <div className="absolute top-1.5 left-1.5 glass px-1.5 py-0.5 rounded-md text-[9px] font-bold" style={{ color: '#9C6A50' }}>
+                    <div className="absolute top-1.5 left-1.5 glass px-2 py-0.5 rounded-md text-[10px] font-bold" style={{ color: '#9C6A50' }}>
                         خيارات
                     </div>
                 )}
             </div>
 
             {/* Info */}
-            <div className="p-2 flex-1 flex flex-col">
-                <h3 className="font-bold text-xs leading-tight line-clamp-2" style={{ color: '#3D2214' }}>{item.nameAr}</h3>
+            <div className="p-2.5 flex-1 flex flex-col">
+                <h3 className="font-bold text-sm leading-tight line-clamp-2" style={{ color: '#3D2214' }}>{item.nameAr}</h3>
                 {item.descriptionAr && (
-                    <p className="text-[10px] mt-0.5 line-clamp-1" style={{ color: '#B08A75' }}>{item.descriptionAr}</p>
+                    <p className="text-xs mt-0.5 line-clamp-1" style={{ color: '#8B6F5E' }}>{item.descriptionAr}</p>
                 )}
 
                 {/* Price + Add */}
                 <div className="flex items-center justify-between mt-auto pt-2">
-                    <span className="font-bold text-xs" style={{ color: '#C4886D' }}>
+                    <span className="font-extrabold text-sm" style={{ color: '#C4886D' }}>
                         {parseFloat(item.price).toFixed(0)} ₪
                     </span>
 
                     <div onClick={(e) => e.stopPropagation()}>
                         {cartQty > 0 && !hasOptions ? (
-                            <div className="flex items-center gap-0.5">
-                                <button onClick={handleDecrement} className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] active:scale-90 font-bold transition-all" style={{ backgroundColor: '#FBDCE0', color: '#B35565' }}>
+                            <div className="flex items-center gap-1">
+                                <button onClick={handleDecrement} className="w-6 h-6 rounded-full flex items-center justify-center text-xs active:scale-90 font-bold transition-all" style={{ backgroundColor: '#FBDCE0', color: '#B35565' }}>
                                     −
                                 </button>
-                                <span className="font-bold text-[10px] w-4 text-center" style={{ color: '#3D2214' }}>{cartQty}</span>
-                                <button onClick={handleIncrement} className="w-5 h-5 rounded-full text-white flex items-center justify-center text-[10px] active:scale-90 font-bold transition-all shadow-sm" style={{ background: 'linear-gradient(135deg, #E88C9A, #C4886D)' }}>
+                                <span className="font-bold text-xs w-5 text-center" style={{ color: '#3D2214' }}>{cartQty}</span>
+                                <button onClick={handleIncrement} className="w-6 h-6 rounded-full text-white flex items-center justify-center text-xs active:scale-90 font-bold transition-all shadow-sm" style={{ background: 'linear-gradient(135deg, #E88C9A, #C4886D)' }}>
                                     +
                                 </button>
                             </div>
                         ) : (
-                            <button onClick={handleQuickAdd} className="w-6 h-6 rounded-full text-white flex items-center justify-center text-xs font-bold active:scale-90 transition-all shadow-md animate-pulse-glow" style={{ background: 'linear-gradient(135deg, #E88C9A, #C4886D)' }}>
+                            <button onClick={handleQuickAdd} className="w-7 h-7 rounded-full text-white flex items-center justify-center text-sm font-bold active:scale-90 transition-all shadow-md animate-pulse-glow" style={{ background: 'linear-gradient(135deg, #E88C9A, #C4886D)' }}>
                                 +
                             </button>
                         )}
