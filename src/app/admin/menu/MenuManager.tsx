@@ -66,6 +66,7 @@ export default function MenuManager() {
     });
     const [uploading, setUploading] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const catFileInputRef = useRef<HTMLInputElement>(null);
 
     // Fetch categories
     const fetchCategories = useCallback(async () => {
@@ -361,9 +362,32 @@ export default function MenuManager() {
                             <h3 className="text-white font-bold">{editCat ? "تعديل تصنيف" : "تصنيف جديد"}</h3>
                             <button onClick={() => setShowCatModal(false)} className="text-white/30 hover:text-white p-1"><X className="w-5 h-5" /></button>
                         </div>
+                        {/* Image upload for category */}
+                        <div className="flex items-center gap-3">
+                            <div className="w-16 h-16 rounded-xl overflow-hidden bg-white/5 border border-white/10 flex items-center justify-center flex-shrink-0">
+                                {catForm.image && (catForm.image.startsWith('http') || catForm.image.startsWith('/')) ? (
+                                    <img src={catForm.image} alt="" className="w-full h-full object-cover" />
+                                ) : catForm.image ? (
+                                    <span className="text-2xl">{catForm.image}</span>
+                                ) : (
+                                    <ImageIcon className="w-5 h-5 text-white/15" />
+                                )}
+                            </div>
+                            <div>
+                                <input ref={catFileInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => handleImageUpload(e, "category")} />
+                                <button onClick={() => catFileInputRef.current?.click()} disabled={uploading} className="flex items-center gap-1.5 text-xs px-3 py-2 rounded-lg text-cafe-300 bg-cafe-500/10 hover:bg-cafe-500/20 transition-all border border-cafe-500/20">
+                                    <Upload className="w-3.5 h-3.5" />
+                                    {uploading ? "جاري الرفع..." : "رفع صورة"}
+                                </button>
+                                {catForm.image && (catForm.image.startsWith('http') || catForm.image.startsWith('/')) && (
+                                    <button onClick={() => setCatForm({ ...catForm, image: "" })} className="text-red-400/60 text-[10px] mt-1 block hover:text-red-400">إزالة الصورة</button>
+                                )}
+                            </div>
+                        </div>
+
                         <input placeholder="الاسم بالعربي *" value={catForm.nameAr} onChange={(e) => setCatForm({ ...catForm, nameAr: e.target.value })} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-white/20 focus:outline-none focus:border-cafe-400/50 transition-all" autoFocus />
                         <input placeholder="الاسم بالإنجليزي" value={catForm.nameEn} onChange={(e) => setCatForm({ ...catForm, nameEn: e.target.value })} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-white/20 focus:outline-none focus:border-cafe-400/50 transition-all" />
-                        <input placeholder="صورة / إيموجي (اختياري)" value={catForm.image} onChange={(e) => setCatForm({ ...catForm, image: e.target.value })} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-white/20 focus:outline-none focus:border-cafe-400/50 transition-all" />
+                        <input placeholder="إيموجي (اختياري — إذا لم ترفع صورة)" value={catForm.image && !(catForm.image.startsWith('http') || catForm.image.startsWith('/')) ? catForm.image : ''} onChange={(e) => setCatForm({ ...catForm, image: e.target.value })} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-white/20 focus:outline-none focus:border-cafe-400/50 transition-all" />
                         <div className="flex gap-2 pt-2">
                             <button onClick={saveCat} className="flex-1 bg-gradient-to-r from-cafe-500 to-gold-500 text-white py-3 rounded-xl font-bold text-sm active:scale-[0.97] transition-all shadow-lg shadow-cafe-500/20">حفظ</button>
                             <button onClick={() => setShowCatModal(false)} className="px-6 py-3 rounded-xl text-white/40 hover:text-white hover:bg-white/5 transition-all text-sm">إلغاء</button>
