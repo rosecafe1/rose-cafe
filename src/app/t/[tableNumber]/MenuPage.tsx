@@ -123,10 +123,6 @@ function MenuContent({ tableNumber }: { tableNumber: number }) {
                                 </div>
                             </div>
 
-                            {/* Decorative Image */}
-                            <div className="absolute right-0 top-0 opacity-80 mix-blend-multiply w-28 h-28 pointer-events-none">
-                                <img src="/images/girl-coffee.png" alt="Decoration" className="w-full h-full object-contain" />
-                            </div>
 
                             <div className="w-24 h-24 rounded-full overflow-hidden shadow-warm border-2 border-white/60 mb-3 relative z-10" style={{ backgroundColor: '#FFF' }}>
                                 <img src="/images/logo.png" alt="Rose Cafe" className="w-full h-full object-cover" />
