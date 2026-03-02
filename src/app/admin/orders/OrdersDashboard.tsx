@@ -87,6 +87,7 @@ export default function OrdersDashboard({ user }: Props) {
     const [toasts, setToasts] = useState<Toast[]>([]);
     const [printingOrder, setPrintingOrder] = useState<Order | null>(null);
     const toastTimeouts = useRef<Record<string, NodeJS.Timeout>>({});
+    const lastOrderCountRef = useRef<number>(-1);
 
     // Request notification permission on mount
     useEffect(() => {
@@ -94,23 +95,6 @@ export default function OrdersDashboard({ user }: Props) {
             Notification.requestPermission();
         }
     }, []);
-
-    const fetchOrders = useCallback(async () => {
-        try {
-            const res = await fetch(`/api/admin/orders?status=${activeTab}`);
-            if (res.status === 401) { router.push("/admin/login"); return; }
-            const data = await res.json();
-            setOrders(data.orders || []);
-        } catch (err) {
-            console.error("Failed to fetch orders:", err);
-        }
-        setLoading(false);
-    }, [activeTab, router]);
-
-    useEffect(() => {
-        setLoading(true);
-        fetchOrders();
-    }, [fetchOrders]);
 
     // Show toast notification
     const showToast = useCallback((message: string, tableNumber: number) => {
@@ -161,44 +145,58 @@ export default function OrdersDashboard({ user }: Props) {
         } catch { }
     }, []);
 
-    // SSE for realtime updates
-    useEffect(() => {
-        const eventSource = new EventSource("/api/admin/events");
-        eventSource.onopen = () => setConnected(true);
-        eventSource.onerror = () => setConnected(false);
+    const fetchOrders = useCallback(async (isPolling = false) => {
+        if (!isPolling) setLoading(true);
+        try {
+            const res = await fetch(`/api/admin/orders?status=${activeTab}`);
+            if (res.status === 401) { router.push("/admin/login"); return; }
+            const data = await res.json();
+            const fetchedOrders = data.orders || [];
+            setOrders(fetchedOrders);
+            setConnected(true);
 
-        eventSource.addEventListener("new_order", (e) => {
-            playNotificationSound();
+            // If we're looking at NEW orders, check if we have more than before
+            if (activeTab === "NEW") {
+                const currentCount = fetchedOrders.length;
+                if (lastOrderCountRef.current !== -1 && currentCount > lastOrderCountRef.current) {
+                    // We have new orders! Create notification for the newest one
+                    playNotificationSound();
 
-            // Parse order data for table number
-            let tableNum = 0;
-            try {
-                const data = JSON.parse(e.data);
-                tableNum = data.tableNumber || 0;
-            } catch { }
+                    const newestOrder = fetchedOrders[0];
+                    const tableNum = newestOrder?.table?.number || 0;
 
-            // Desktop notification
-            if ("Notification" in window && Notification.permission === "granted") {
-                new Notification("🔔 طلب جديد!", {
-                    body: tableNum ? `طاولة ${tableNum} أرسلت طلباً جديداً` : "تم استلام طلب جديد",
-                    icon: "/images/logo.png",
-                    tag: "new-order",
-                    requireInteraction: true,
-                });
+                    if ("Notification" in window && Notification.permission === "granted") {
+                        new Notification("🔔 طلب جديد!", {
+                            body: tableNum ? `طاولة ${tableNum} أرسلت طلباً جديداً` : "تم استلام طلب جديد",
+                            icon: "/images/logo.png",
+                            tag: "new-order",
+                            requireInteraction: true,
+                        });
+                    }
+
+                    showToast("طلب جديد!", tableNum);
+                }
+                lastOrderCountRef.current = currentCount;
             }
+        } catch (err) {
+            console.error("Failed to fetch orders:", err);
+            setConnected(false);
+        }
+        if (!isPolling) setLoading(false);
+    }, [activeTab, router, playNotificationSound, showToast]);
 
-            // In-app toast
-            showToast("طلب جديد!", tableNum);
+    // Polling setup for Vercel serverless environment
+    useEffect(() => {
+        // Fetch initially
+        fetchOrders();
 
-            fetchOrders();
-        });
+        // Polling interval (every 10 seconds)
+        const intervalId = setInterval(() => {
+            fetchOrders(true);
+        }, 10000);
 
-        eventSource.addEventListener("status_change", () => {
-            fetchOrders();
-        });
-
-        return () => eventSource.close();
-    }, [fetchOrders, playNotificationSound, showToast]);
+        return () => clearInterval(intervalId);
+    }, [fetchOrders]);
 
     const handleStatusChange = async (orderId: string, newStatus: string) => {
         try {
