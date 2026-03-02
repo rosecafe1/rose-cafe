@@ -16,7 +16,7 @@ export async function PATCH(request: Request, { params }: { params: { id: string
             ...(data.nameAr !== undefined && { nameAr: data.nameAr }),
             ...(data.nameEn !== undefined && { nameEn: data.nameEn }),
             ...(data.descriptionAr !== undefined && { descriptionAr: data.descriptionAr }),
-            ...(data.price !== undefined && { price: data.price }),
+            ...(data.price !== undefined && { price: parseFloat(data.price.toString()) }),
             ...(data.isAvailable !== undefined && { isAvailable: data.isAvailable }),
             ...(data.categoryId !== undefined && { categoryId: data.categoryId }),
             ...(data.image !== undefined && { image: data.image }),

@@ -52,7 +52,7 @@ export async function POST(request: Request) {
                 nameAr,
                 nameEn: nameEn || "",
                 descriptionAr: descriptionAr || null,
-                price,
+                price: parseFloat(price.toString()),
                 categoryId,
                 image: image || null,
                 sortOrder: (maxSort._max.sortOrder || 0) + 1,
