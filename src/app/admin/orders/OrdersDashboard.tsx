@@ -115,43 +115,27 @@ export default function OrdersDashboard({ user }: Props) {
         setTimeout(() => setToasts(prev => prev.filter(t => t.id !== id)), 400);
     };
 
-    // AudioContext singleton to bypass gesture restrictions if created early
-    const audioCtxRef = useRef<AudioContext | null>(null);
+    // Audio element singleton to bypass gesture restrictions
+    const audioRef = useRef<HTMLAudioElement | null>(null);
+
+    // Simple bell ding sound encoded as base64 (very short, standard beep)
+    const BEEP_B64 = "data:audio/mp3;base64,//NExAAAAANIAAAAAExBTUUzLjEwMKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq";
 
     // Play premium notification sound
     const playNotificationSound = useCallback(() => {
         try {
-            if (!audioCtxRef.current) {
-                audioCtxRef.current = new AudioContext();
+            if (!audioRef.current) {
+                audioRef.current = new Audio(BEEP_B64);
+                audioRef.current.volume = 1.0;
             }
-            const ctx = audioCtxRef.current;
-            if (ctx.state === 'suspended') {
-                ctx.resume();
+            // Reset to start and play
+            audioRef.current.currentTime = 0;
+            const playPromise = audioRef.current.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(() => {
+                    console.log("Audio playback was prevented by the browser.");
+                });
             }
-            const now = ctx.currentTime;
-
-            // First note (higher)
-            const osc1 = ctx.createOscillator();
-            const gain1 = ctx.createGain();
-            osc1.connect(gain1); gain1.connect(ctx.destination);
-            osc1.frequency.value = 880;
-            osc1.type = "sine";
-            gain1.gain.setValueAtTime(0.25, now);
-            gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
-            osc1.start(now);
-            osc1.stop(now + 0.3);
-
-            // Second note (lower, slight delay)
-            const osc2 = ctx.createOscillator();
-            const gain2 = ctx.createGain();
-            osc2.connect(gain2); gain2.connect(ctx.destination);
-            osc2.frequency.value = 660;
-            osc2.type = "sine";
-            gain2.gain.setValueAtTime(0, now + 0.15);
-            gain2.gain.linearRampToValueAtTime(0.2, now + 0.2);
-            gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
-            osc2.start(now + 0.15);
-            osc2.stop(now + 0.6);
         } catch { }
     }, []);
 
@@ -172,12 +156,17 @@ export default function OrdersDashboard({ user }: Props) {
                         const tableNum = newestOrder?.table?.number || 0;
 
                         if ("Notification" in window && Notification.permission === "granted") {
-                            new Notification("🔔 طلب جديد!", {
-                                body: tableNum ? `طاولة ${tableNum} أرسلت طلباً جديداً` : "تم استلام طلب جديد",
-                                icon: "/images/logo.png",
-                                tag: "new-order",
-                                requireInteraction: true,
-                            });
+                            try {
+                                new Notification("🛎️ روز كافيه - طلب جديد!", {
+                                    body: tableNum ? `طاولة ${tableNum} أرسلت طلباً جديداً` : "تم استلام طلب جديد",
+                                    icon: "https://rosecafe.online/images/logo.png",
+                                    tag: "new-order-" + Date.now(),
+                                    requireInteraction: true,
+                                    silent: false
+                                });
+                            } catch (e) {
+                                console.log("Failed to show desktop notification", e);
+                            }
                         }
                         showToast("طلب جديد!", tableNum);
                     }
@@ -315,13 +304,24 @@ export default function OrdersDashboard({ user }: Props) {
                             <div className="flex items-center gap-1">
                                 <button
                                     onClick={() => {
-                                        setNotificationsEnabled(!notificationsEnabled);
-                                        // Initialize AudioContext on user gesture
-                                        if (!audioCtxRef.current) audioCtxRef.current = new AudioContext();
-                                        if (audioCtxRef.current.state === 'suspended') audioCtxRef.current.resume();
-                                        // Request permission if not granted
-                                        if ("Notification" in window && Notification.permission === "default") {
-                                            Notification.requestPermission();
+                                        const newState = !notificationsEnabled;
+                                        setNotificationsEnabled(newState);
+                                        // Initialize Audio element on user gesture to bypass autoplay policy
+                                        if (newState) {
+                                            if (!audioRef.current) {
+                                                audioRef.current = new Audio(BEEP_B64);
+                                                audioRef.current.volume = 1.0;
+                                            }
+                                            // Play silently once to unlock audio context in the browser
+                                            audioRef.current.play().then(() => {
+                                                audioRef.current!.pause();
+                                                audioRef.current!.currentTime = 0;
+                                            }).catch(e => console.log('Audio unlock failed', e));
+
+                                            // Request permission if not granted
+                                            if ("Notification" in window && Notification.permission === "default") {
+                                                Notification.requestPermission();
+                                            }
                                         }
                                     }}
                                     className={`p-2.5 rounded-xl transition-all ${notificationsEnabled ? "text-emerald-400 hover:bg-emerald-400/10" : "text-gray-400 hover:bg-gray-500/10"}`}
