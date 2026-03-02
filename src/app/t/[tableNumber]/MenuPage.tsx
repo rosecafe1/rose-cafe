@@ -56,6 +56,22 @@ function MenuContent({ tableNumber }: { tableNumber: number }) {
     const [search, setSearch] = useState("");
     const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null);
 
+    // Typewriter effect for search placeholder
+    const [placeholder, setPlaceholder] = useState("");
+    const targetPlaceholder = "ابحث عن صنف...";
+    useEffect(() => {
+        let i = 0;
+        const typingInterval = setInterval(() => {
+            if (i < targetPlaceholder.length) {
+                setPlaceholder(targetPlaceholder.slice(0, i + 1));
+                i++;
+            } else {
+                setTimeout(() => { i = 0; setPlaceholder(""); }, 2000);
+            }
+        }, 150);
+        return () => clearInterval(typingInterval);
+    }, []);
+
     useEffect(() => {
         fetch("/api/menu")
             .then((r) => r.json())
@@ -119,7 +135,7 @@ function MenuContent({ tableNumber }: { tableNumber: number }) {
                             <Search className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: '#d1899a' }} />
                             <input
                                 type="text"
-                                placeholder="ابحث عن صنف..."
+                                placeholder={placeholder}
                                 style={{ backgroundColor: 'rgba(255,255,255,0.8)', border: '1px solid rgba(209,137,154,0.3)', color: '#9d3b54', fontSize: '15px' }}
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
