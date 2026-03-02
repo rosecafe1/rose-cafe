@@ -100,19 +100,18 @@ function MenuContent({ tableNumber }: { tableNumber: number }) {
                 {/* Header */}
                 <header className="sticky top-0 z-40 glass" style={{ borderBottom: '1px solid rgba(196,136,109,0.1)' }}>
                     <div className="px-4 pt-4 pb-3">
-                        <div className="flex items-center justify-between mb-3">
-                            <div className="flex items-center gap-2.5">
-                                <div className="w-11 h-11 rounded-xl overflow-hidden shadow-warm border border-white/40">
-                                    <img src="/images/logo.png" alt="Rose Cafe" className="w-full h-full object-cover" />
-                                </div>
-                                <div>
-                                    <h1 className="text-xl font-extrabold" style={{ color: '#3D2214' }}>Rose Cafe</h1>
-                                    <p className="text-xs font-semibold" style={{ color: '#8B6F5E' }}>روز كافيه · اطلب من طاولتك</p>
+                        <div className="flex flex-col items-center justify-center mb-5 relative">
+                            <div className="absolute left-0 top-0">
+                                <div className="px-3 py-1.5 rounded-xl text-sm font-extrabold text-white shadow-warm" style={{ background: 'linear-gradient(135deg, #C4886D, #D4A76A)' }}>
+                                    طاولة {tableNumber}
                                 </div>
                             </div>
-                            <div className="px-4 py-2 rounded-xl text-base font-extrabold text-white shadow-warm" style={{ background: 'linear-gradient(135deg, #C4886D, #D4A76A)' }}>
-                                طاولة {tableNumber}
+
+                            <div className="w-24 h-24 rounded-full overflow-hidden shadow-warm border-2 border-white/60 mb-3" style={{ backgroundColor: '#FFF' }}>
+                                <img src="/images/logo.png" alt="Rose Cafe" className="w-full h-full object-cover" />
                             </div>
+                            <h1 className="text-2xl font-extrabold tracking-wide" style={{ color: '#3D2214' }}>Rose Cafe</h1>
+                            <p className="text-sm font-semibold mt-1" style={{ color: '#8B6F5E' }}>روز كافيه · اطلب من طاولتك</p>
                         </div>
 
                         {/* Search */}
