@@ -46,7 +46,7 @@ export default function InvoicePrint({ order }: InvoicePrintProps) {
     };
 
     return (
-        <div className="hidden print:block print:w-full print:bg-white print:text-black print:absolute print:top-0 print:left-0 print:right-0 print:z-50 p-4" dir="rtl">
+        <div className="hidden print:block print:w-full print:bg-white print:text-black print:absolute print:top-0 print:left-0 print:right-0 print:z-50 p-4 print:p-12" dir="rtl">
             {/* Header */}
             <div className="text-center mb-6 border-b-2 border-dashed border-gray-300 pb-4">
                 <img src="/images/logo.png" alt="Rose Cafe" className="w-16 h-16 mx-auto mb-2 grayscale" />

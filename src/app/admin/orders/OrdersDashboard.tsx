@@ -241,202 +241,204 @@ export default function OrdersDashboard({ user }: Props) {
             {/* Hidden Printable Invoice */}
             <InvoicePrint order={printingOrder} />
 
-            {/* Toast Notifications */}
-            <div className="fixed top-4 left-1/2 -translate-x-1/2 z-[100] flex flex-col gap-2 w-full max-w-md px-4">
-                {toasts.map((toast) => (
-                    <div
-                        key={toast.id}
-                        className={`flex items-center gap-3 px-4 py-3 rounded-2xl shadow-2xl border border-emerald-500/30 ${toast.exiting ? 'animate-toast-exit' : 'animate-toast'}`}
-                        style={{ background: 'linear-gradient(135deg, rgba(16,185,129,0.95), rgba(5,150,105,0.95))' }}
-                    >
-                        <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center animate-pulse">
-                            <BellRing className="w-5 h-5 text-white" />
-                        </div>
-                        <div className="flex-1">
-                            <p className="text-white font-bold text-sm">{toast.message}</p>
-                            {toast.tableNumber > 0 && (
-                                <p className="text-emerald-100 text-xs">طاولة {toast.tableNumber}</p>
-                            )}
-                        </div>
-                        <button onClick={() => dismissToast(toast.id)} className="text-white/60 hover:text-white p-1">
-                            <X className="w-4 h-4" />
-                        </button>
-                    </div>
-                ))}
-            </div>
-
-            {/* Header */}
-            <header className="sticky top-0 z-40 glass-dark" style={{ borderBottom: '1px solid rgba(196,136,109,0.1)' }}>
-                <div className="max-w-5xl mx-auto px-4 py-3">
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cafe-500 to-gold-500 flex items-center justify-center shadow-lg shadow-cafe-500/20">
-                                <Utensils className="w-5 h-5 text-white" />
+            <div className="print:hidden">
+                {/* Toast Notifications */}
+                <div className="fixed top-4 left-1/2 -translate-x-1/2 z-[100] flex flex-col gap-2 w-full max-w-md px-4">
+                    {toasts.map((toast) => (
+                        <div
+                            key={toast.id}
+                            className={`flex items-center gap-3 px-4 py-3 rounded-2xl shadow-2xl border border-emerald-500/30 ${toast.exiting ? 'animate-toast-exit' : 'animate-toast'}`}
+                            style={{ background: 'linear-gradient(135deg, rgba(16,185,129,0.95), rgba(5,150,105,0.95))' }}
+                        >
+                            <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center animate-pulse">
+                                <BellRing className="w-5 h-5 text-white" />
                             </div>
-                            <div>
-                                <h1 className="text-base font-bold text-white flex items-center gap-2">
-                                    إدارة الطلبات
-                                    <span className={`w-2 h-2 rounded-full ${connected ? "bg-emerald-400 animate-pulse" : "bg-red-400"}`} />
-                                </h1>
-                                <p className="text-xs text-white/50">مرحباً {user.displayName}</p>
+                            <div className="flex-1">
+                                <p className="text-white font-bold text-sm">{toast.message}</p>
+                                {toast.tableNumber > 0 && (
+                                    <p className="text-emerald-100 text-xs">طاولة {toast.tableNumber}</p>
+                                )}
                             </div>
-                        </div>
-                        <div className="flex items-center gap-1">
-                            <button onClick={() => router.push("/admin/accounting")} className="p-2.5 rounded-xl text-white/50 hover:text-white hover:bg-white/5 transition-all" title="المحاسبة">
-                                <BarChart3 className="w-5 h-5" />
-                            </button>
-                            <button onClick={() => router.push("/admin/menu")} className="p-2.5 rounded-xl text-white/50 hover:text-white hover:bg-white/5 transition-all" title="القائمة">
-                                <ChefHat className="w-5 h-5" />
-                            </button>
-                            <button onClick={() => router.push("/admin/tables")} className="p-2.5 rounded-xl text-white/50 hover:text-white hover:bg-white/5 transition-all" title="QR">
-                                <QrCode className="w-5 h-5" />
-                            </button>
-                            <button onClick={handleLogout} className="p-2.5 rounded-xl text-red-400/60 hover:text-red-400 hover:bg-red-500/10 transition-all" title="خروج">
-                                <LogOut className="w-5 h-5" />
+                            <button onClick={() => dismissToast(toast.id)} className="text-white/60 hover:text-white p-1">
+                                <X className="w-4 h-4" />
                             </button>
                         </div>
-                    </div>
-
-                    {/* Status Tabs */}
-                    <div className="flex gap-1.5 mt-3 overflow-x-auto scrollbar-hide pb-1">
-                        {TABS.map((tab) => {
-                            const Icon = tab.icon;
-                            const isActive = activeTab === tab.key;
-                            return (
-                                <button
-                                    key={tab.key}
-                                    onClick={() => setActiveTab(tab.key)}
-                                    className={`flex-shrink-0 flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold transition-all ${isActive
-                                        ? `bg-gradient-to-r ${tab.gradient} text-white shadow-lg`
-                                        : "text-white/40 hover:text-white/70 hover:bg-white/5"
-                                        }`}
-                                >
-                                    <Icon className="w-4 h-4" />
-                                    {tab.label}
-                                </button>
-                            );
-                        })}
-                    </div>
+                    ))}
                 </div>
-            </header>
 
-            {/* Orders Grid */}
-            <div className="max-w-5xl mx-auto px-4 mt-4 pb-8">
-                {loading ? (
-                    <div className="text-center py-20">
-                        <div className="animate-spin w-10 h-10 border-3 border-cafe-500/30 border-t-cafe-400 rounded-full mx-auto mb-4"></div>
-                        <p className="text-white/30 text-sm">جاري التحميل...</p>
-                    </div>
-                ) : orders.length === 0 ? (
-                    <div className="text-center py-20">
-                        <div className="w-20 h-20 rounded-full bg-white/5 flex items-center justify-center mx-auto mb-4">
-                            <Bell className="w-8 h-8 text-white/20" />
+                {/* Header */}
+                <header className="sticky top-0 z-40 glass-dark" style={{ borderBottom: '1px solid rgba(196,136,109,0.1)' }}>
+                    <div className="max-w-5xl mx-auto px-4 py-3">
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cafe-500 to-gold-500 flex items-center justify-center shadow-lg shadow-cafe-500/20">
+                                    <Utensils className="w-5 h-5 text-white" />
+                                </div>
+                                <div>
+                                    <h1 className="text-base font-bold text-white flex items-center gap-2">
+                                        إدارة الطلبات
+                                        <span className={`w-2 h-2 rounded-full ${connected ? "bg-emerald-400 animate-pulse" : "bg-red-400"}`} />
+                                    </h1>
+                                    <p className="text-xs text-white/50">مرحباً {user.displayName}</p>
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-1">
+                                <button onClick={() => router.push("/admin/accounting")} className="p-2.5 rounded-xl text-white/50 hover:text-white hover:bg-white/5 transition-all" title="المحاسبة">
+                                    <BarChart3 className="w-5 h-5" />
+                                </button>
+                                <button onClick={() => router.push("/admin/menu")} className="p-2.5 rounded-xl text-white/50 hover:text-white hover:bg-white/5 transition-all" title="القائمة">
+                                    <ChefHat className="w-5 h-5" />
+                                </button>
+                                <button onClick={() => router.push("/admin/tables")} className="p-2.5 rounded-xl text-white/50 hover:text-white hover:bg-white/5 transition-all" title="QR">
+                                    <QrCode className="w-5 h-5" />
+                                </button>
+                                <button onClick={handleLogout} className="p-2.5 rounded-xl text-red-400/60 hover:text-red-400 hover:bg-red-500/10 transition-all" title="خروج">
+                                    <LogOut className="w-5 h-5" />
+                                </button>
+                            </div>
                         </div>
-                        <p className="text-white/30 text-sm">لا توجد طلبات {STATUS_LABELS[activeTab] || ""}</p>
+
+                        {/* Status Tabs */}
+                        <div className="flex gap-1.5 mt-3 overflow-x-auto scrollbar-hide pb-1">
+                            {TABS.map((tab) => {
+                                const Icon = tab.icon;
+                                const isActive = activeTab === tab.key;
+                                return (
+                                    <button
+                                        key={tab.key}
+                                        onClick={() => setActiveTab(tab.key)}
+                                        className={`flex-shrink-0 flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold transition-all ${isActive
+                                            ? `bg-gradient-to-r ${tab.gradient} text-white shadow-lg`
+                                            : "text-white/40 hover:text-white/70 hover:bg-white/5"
+                                            }`}
+                                    >
+                                        <Icon className="w-4 h-4" />
+                                        {tab.label}
+                                    </button>
+                                );
+                            })}
+                        </div>
                     </div>
-                ) : (
-                    <div className="grid gap-4 md:grid-cols-2">
-                        {orders.map((order, i) => {
-                            const sc = STATUS_COLORS[order.status] || STATUS_COLORS.NEW;
-                            return (
-                                <div
-                                    key={order.id}
-                                    className={`card-admin animate-fade-in overflow-hidden ${sc.glow}`}
-                                    style={{ animationDelay: `${i * 50}ms` }}
-                                >
-                                    {/* Order Header */}
-                                    <div className="p-4 flex items-center justify-between" style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                                        <div className="flex items-center gap-3">
-                                            <div className="bg-gradient-to-br from-cafe-500/20 to-gold-500/20 text-cafe-300 px-3 py-1.5 rounded-lg text-sm font-bold flex items-center gap-1.5 border border-cafe-500/20">
-                                                <Utensils className="w-3.5 h-3.5" />
-                                                طاولة {order.table.number}
-                                            </div>
-                                            <div>
-                                                <span className="text-white/80 text-sm font-mono">
-                                                    #{order.orderNumber.slice(-6).toUpperCase()}
-                                                </span>
-                                                <p className="text-white/30 text-xs flex items-center gap-1">
-                                                    <Clock className="w-3 h-3" />
-                                                    {timeAgo(order.createdAt)}
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <div className="flex gap-2 items-center">
-                                            <button
-                                                onClick={() => handlePrint(order)}
-                                                className="p-1.5 rounded-full text-white/50 hover:text-white hover:bg-white/10 transition-colors"
-                                                title="طباعة الفاتورة"
-                                            >
-                                                <Printer className="w-4 h-4" />
-                                            </button>
-                                            <div className={`px-3 py-1 rounded-full text-xs font-bold border ${sc.bg} ${sc.text} ${sc.border}`}>
-                                                {STATUS_LABELS[order.status]}
-                                            </div>
-                                        </div>
-                                    </div>
+                </header>
 
-                                    {/* Order Items */}
-                                    <div className="p-4 space-y-2.5">
-                                        {order.items.map((item) => (
-                                            <div key={item.id} className="flex justify-between items-start text-sm">
-                                                <div className="flex-1">
-                                                    <span className="text-white/90 font-medium">
-                                                        <span className="text-cafe-400 font-bold ml-1">{item.quantity}×</span>
-                                                        {item.itemNameAr}
-                                                    </span>
-                                                    {item.options.length > 0 && (
-                                                        <p className="text-white/30 text-xs mt-0.5">
-                                                            {item.options.map((o) => o.optionNameAr).join("، ")}
-                                                        </p>
-                                                    )}
-                                                    {item.notes && (
-                                                        <p className="text-amber-400/60 text-xs mt-0.5">📝 {item.notes}</p>
-                                                    )}
+                {/* Orders Grid */}
+                <div className="max-w-5xl mx-auto px-4 mt-4 pb-8">
+                    {loading ? (
+                        <div className="text-center py-20">
+                            <div className="animate-spin w-10 h-10 border-3 border-cafe-500/30 border-t-cafe-400 rounded-full mx-auto mb-4"></div>
+                            <p className="text-white/30 text-sm">جاري التحميل...</p>
+                        </div>
+                    ) : orders.length === 0 ? (
+                        <div className="text-center py-20">
+                            <div className="w-20 h-20 rounded-full bg-white/5 flex items-center justify-center mx-auto mb-4">
+                                <Bell className="w-8 h-8 text-white/20" />
+                            </div>
+                            <p className="text-white/30 text-sm">لا توجد طلبات {STATUS_LABELS[activeTab] || ""}</p>
+                        </div>
+                    ) : (
+                        <div className="grid gap-4 md:grid-cols-2">
+                            {orders.map((order, i) => {
+                                const sc = STATUS_COLORS[order.status] || STATUS_COLORS.NEW;
+                                return (
+                                    <div
+                                        key={order.id}
+                                        className={`card-admin animate-fade-in overflow-hidden ${sc.glow}`}
+                                        style={{ animationDelay: `${i * 50}ms` }}
+                                    >
+                                        {/* Order Header */}
+                                        <div className="p-4 flex items-center justify-between" style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                                            <div className="flex items-center gap-3">
+                                                <div className="bg-gradient-to-br from-cafe-500/20 to-gold-500/20 text-cafe-300 px-3 py-1.5 rounded-lg text-sm font-bold flex items-center gap-1.5 border border-cafe-500/20">
+                                                    <Utensils className="w-3.5 h-3.5" />
+                                                    طاولة {order.table.number}
                                                 </div>
-                                                <span className="text-white/40 text-xs font-mono">
-                                                    {(parseFloat(item.unitPrice) * item.quantity).toFixed(0)} ₪
+                                                <div>
+                                                    <span className="text-white/80 text-sm font-mono">
+                                                        #{order.orderNumber.slice(-6).toUpperCase()}
+                                                    </span>
+                                                    <p className="text-white/30 text-xs flex items-center gap-1">
+                                                        <Clock className="w-3 h-3" />
+                                                        {timeAgo(order.createdAt)}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div className="flex gap-2 items-center">
+                                                <button
+                                                    onClick={() => handlePrint(order)}
+                                                    className="p-1.5 rounded-full text-white/50 hover:text-white hover:bg-white/10 transition-colors"
+                                                    title="طباعة الفاتورة"
+                                                >
+                                                    <Printer className="w-4 h-4" />
+                                                </button>
+                                                <div className={`px-3 py-1 rounded-full text-xs font-bold border ${sc.bg} ${sc.text} ${sc.border}`}>
+                                                    {STATUS_LABELS[order.status]}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* Order Items */}
+                                        <div className="p-4 space-y-2.5">
+                                            {order.items.map((item) => (
+                                                <div key={item.id} className="flex justify-between items-start text-sm">
+                                                    <div className="flex-1">
+                                                        <span className="text-white/90 font-medium">
+                                                            <span className="text-cafe-400 font-bold ml-1">{item.quantity}×</span>
+                                                            {item.itemNameAr}
+                                                        </span>
+                                                        {item.options.length > 0 && (
+                                                            <p className="text-white/30 text-xs mt-0.5">
+                                                                {item.options.map((o) => o.optionNameAr).join("، ")}
+                                                            </p>
+                                                        )}
+                                                        {item.notes && (
+                                                            <p className="text-amber-400/60 text-xs mt-0.5">📝 {item.notes}</p>
+                                                        )}
+                                                    </div>
+                                                    <span className="text-white/40 text-xs font-mono">
+                                                        {(parseFloat(item.unitPrice) * item.quantity).toFixed(0)} ₪
+                                                    </span>
+                                                </div>
+                                            ))}
+
+                                            {order.notes && (
+                                                <div className="bg-amber-500/5 border border-amber-500/10 rounded-lg p-2.5 mt-2">
+                                                    <p className="text-amber-300/80 text-xs">📝 {order.notes}</p>
+                                                </div>
+                                            )}
+
+                                            <div className="flex justify-between items-center pt-3 mt-2" style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+                                                <span className="text-white/20 text-xs">
+                                                    {order.statusChangedBy && `تحديث: ${order.statusChangedBy}`}
+                                                </span>
+                                                <span className="text-cafe-300 font-bold text-lg">
+                                                    {parseFloat(order.totalAmount).toFixed(0)} ₪
                                                 </span>
                                             </div>
-                                        ))}
+                                        </div>
 
-                                        {order.notes && (
-                                            <div className="bg-amber-500/5 border border-amber-500/10 rounded-lg p-2.5 mt-2">
-                                                <p className="text-amber-300/80 text-xs">📝 {order.notes}</p>
+                                        {/* Action Buttons */}
+                                        {STATUS_FLOW[order.status]?.length > 0 && (
+                                            <div className="px-4 pb-4 flex gap-2">
+                                                {STATUS_FLOW[order.status].map((nextStatus) => {
+                                                    const cfg = ACTION_CONFIG[nextStatus];
+                                                    return (
+                                                        <button
+                                                            key={nextStatus}
+                                                            onClick={() => handleStatusChange(order.id, nextStatus)}
+                                                            className={`flex-1 py-2.5 rounded-xl text-sm font-bold transition-all active:scale-[0.97] ${cfg?.className || ""}`}
+                                                        >
+                                                            {cfg?.icon} {cfg?.label}
+                                                        </button>
+                                                    );
+                                                })}
                                             </div>
                                         )}
-
-                                        <div className="flex justify-between items-center pt-3 mt-2" style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}>
-                                            <span className="text-white/20 text-xs">
-                                                {order.statusChangedBy && `تحديث: ${order.statusChangedBy}`}
-                                            </span>
-                                            <span className="text-cafe-300 font-bold text-lg">
-                                                {parseFloat(order.totalAmount).toFixed(0)} ₪
-                                            </span>
-                                        </div>
                                     </div>
-
-                                    {/* Action Buttons */}
-                                    {STATUS_FLOW[order.status]?.length > 0 && (
-                                        <div className="px-4 pb-4 flex gap-2">
-                                            {STATUS_FLOW[order.status].map((nextStatus) => {
-                                                const cfg = ACTION_CONFIG[nextStatus];
-                                                return (
-                                                    <button
-                                                        key={nextStatus}
-                                                        onClick={() => handleStatusChange(order.id, nextStatus)}
-                                                        className={`flex-1 py-2.5 rounded-xl text-sm font-bold transition-all active:scale-[0.97] ${cfg?.className || ""}`}
-                                                    >
-                                                        {cfg?.icon} {cfg?.label}
-                                                    </button>
-                                                );
-                                            })}
-                                        </div>
-                                    )}
-                                </div>
-                            );
-                        })}
-                    </div>
-                )}
+                                );
+                            })}
+                        </div>
+                    )}
+                </div>
             </div>
         </div>
     );
