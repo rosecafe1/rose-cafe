@@ -88,7 +88,7 @@ export default function OrdersDashboard({ user }: Props) {
     const [printingOrder, setPrintingOrder] = useState<Order | null>(null);
     const [notificationsEnabled, setNotificationsEnabled] = useState(true);
     const toastTimeouts = useRef<Record<string, NodeJS.Timeout>>({});
-    const lastOrderCountRef = useRef<number>(-1);
+    const lastOrderIdRef = useRef<string | null>(null);
 
     // Request notification permission on mount
     useEffect(() => {
@@ -156,15 +156,15 @@ export default function OrdersDashboard({ user }: Props) {
             setOrders(fetchedOrders);
             setConnected(true);
 
-            // If we're looking at NEW orders, check if we have more than before
-            if (activeTab === "NEW") {
-                const currentCount = fetchedOrders.length;
-                if (lastOrderCountRef.current !== -1 && currentCount > lastOrderCountRef.current) {
-                    // We have new orders! Create notification for the newest one
+            // If we're looking at NEW orders, check if the newest order has changed
+            if (activeTab === "NEW" && fetchedOrders.length > 0) {
+                const newestOrder = fetchedOrders[0];
+
+                if (lastOrderIdRef.current !== null && newestOrder.id !== lastOrderIdRef.current) {
+                    // We have a new latest order! Trigger notification
                     if (notificationsEnabled) {
                         playNotificationSound();
 
-                        const newestOrder = fetchedOrders[0];
                         const tableNum = newestOrder?.table?.number || 0;
 
                         if ("Notification" in window && Notification.permission === "granted") {
@@ -179,7 +179,9 @@ export default function OrdersDashboard({ user }: Props) {
                         showToast("طلب جديد!", tableNum);
                     }
                 }
-                lastOrderCountRef.current = currentCount;
+                lastOrderIdRef.current = newestOrder.id;
+            } else if (activeTab === "NEW" && fetchedOrders.length === 0) {
+                lastOrderIdRef.current = null;
             }
         } catch (err) {
             console.error("Failed to fetch orders:", err);
