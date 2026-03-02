@@ -13,6 +13,24 @@ interface Category {
     _count: { items: number };
 }
 
+interface MenuOption {
+    id?: string;
+    nameAr: string;
+    nameEn: string;
+    extraPrice: string | number;
+    isDefault: boolean;
+    isAvailable: boolean;
+}
+
+interface MenuOptionGroup {
+    id?: string;
+    nameAr: string;
+    nameEn: string;
+    isRequired: boolean;
+    isMultiple: boolean;
+    options: MenuOption[];
+}
+
 interface MenuItem {
     id: string;
     nameAr: string;
@@ -23,6 +41,7 @@ interface MenuItem {
     isAvailable: boolean;
     categoryId: string;
     category: { nameAr: string };
+    optionGroups?: MenuOptionGroup[];
 }
 
 export default function MenuManager() {
@@ -40,7 +59,17 @@ export default function MenuManager() {
 
     // Form
     const [catForm, setCatForm] = useState({ nameAr: "", nameEn: "", image: "" });
-    const [itemForm, setItemForm] = useState({ nameAr: "", nameEn: "", descriptionAr: "", price: "", categoryId: "", image: "" });
+    const [itemForm, setItemForm] = useState<{
+        nameAr: string;
+        nameEn: string;
+        descriptionAr: string;
+        price: string;
+        categoryId: string;
+        image: string;
+        optionGroups: MenuOptionGroup[];
+    }>({
+        nameAr: "", nameEn: "", descriptionAr: "", price: "", categoryId: "", image: "", optionGroups: []
+    });
     const [uploading, setUploading] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -152,7 +181,7 @@ export default function MenuManager() {
     // Item CRUD
     const openAddItem = () => {
         setEditItem(null);
-        setItemForm({ nameAr: "", nameEn: "", descriptionAr: "", price: "", categoryId: activeCategory || "", image: "" });
+        setItemForm({ nameAr: "", nameEn: "", descriptionAr: "", price: "", categoryId: activeCategory || "", image: "", optionGroups: [] });
         setShowItemModal(true);
     };
 
@@ -162,6 +191,7 @@ export default function MenuManager() {
             nameAr: item.nameAr, nameEn: item.nameEn,
             descriptionAr: item.descriptionAr || "", price: item.price,
             categoryId: item.categoryId, image: item.image || "",
+            optionGroups: item.optionGroups || []
         });
         setShowItemModal(true);
     };
@@ -416,6 +446,121 @@ export default function MenuManager() {
                             <input placeholder="الاسم بالإنجليزي" value={itemForm.nameEn} onChange={(e) => setItemForm({ ...itemForm, nameEn: e.target.value })} className="w-full rounded-xl px-4 py-3 text-sm placeholder-gray-400 focus:outline-none" style={{ backgroundColor: 'rgba(255,255,255,0.7)', border: '1px solid #F0D1C4', color: '#5A3D2E' }} />
                             <input placeholder="الوصف (اختياري)" value={itemForm.descriptionAr} onChange={(e) => setItemForm({ ...itemForm, descriptionAr: e.target.value })} className="w-full rounded-xl px-4 py-3 text-sm placeholder-gray-400 focus:outline-none" style={{ backgroundColor: 'rgba(255,255,255,0.7)', border: '1px solid #F0D1C4', color: '#5A3D2E' }} />
                             <input type="number" placeholder="السعر (₪) *" value={itemForm.price} onChange={(e) => setItemForm({ ...itemForm, price: e.target.value })} className="w-full rounded-xl px-4 py-3 text-sm placeholder-gray-400 focus:outline-none" style={{ backgroundColor: 'rgba(255,255,255,0.7)', border: '1px solid #F0D1C4', color: '#5A3D2E' }} />
+
+                            {/* Advanced Options Section */}
+                            <div className="pt-4 mt-4 border-t" style={{ borderColor: '#F0D1C4' }}>
+                                <div className="flex items-center justify-between mb-3">
+                                    <h4 className="font-bold text-sm" style={{ color: '#5A3D2E' }}>الخيارات الإضافية (أحجام، إضافات...)</h4>
+                                    <button
+                                        onClick={() => setItemForm({
+                                            ...itemForm,
+                                            optionGroups: [...itemForm.optionGroups, { nameAr: "", nameEn: "", isRequired: false, isMultiple: false, options: [] }]
+                                        })}
+                                        className="text-xs px-3 py-1.5 rounded-lg active:scale-95 transition-all text-white"
+                                        style={{ backgroundColor: '#C4886D' }}
+                                    >
+                                        + مجموعة جديدة
+                                    </button>
+                                </div>
+
+                                {itemForm.optionGroups.map((group, groupIndex) => (
+                                    <div key={groupIndex} className="p-3 rounded-xl mb-3 border border-dashed" style={{ backgroundColor: 'rgba(255,255,255,0.5)', borderColor: '#C4886D' }}>
+                                        <div className="flex items-center justify-between mb-2">
+                                            <input
+                                                placeholder="اسم المجموعة (مثل: الحجم)"
+                                                value={group.nameAr}
+                                                onChange={(e) => {
+                                                    const newGroups = [...itemForm.optionGroups];
+                                                    newGroups[groupIndex].nameAr = e.target.value;
+                                                    setItemForm({ ...itemForm, optionGroups: newGroups });
+                                                }}
+                                                className="flex-1 bg-transparent text-sm font-bold focus:outline-none border-b border-white pb-1"
+                                                style={{ color: '#5A3D2E' }}
+                                                autoFocus
+                                            />
+                                            <button
+                                                onClick={() => {
+                                                    const newGroups = itemForm.optionGroups.filter((_, i) => i !== groupIndex);
+                                                    setItemForm({ ...itemForm, optionGroups: newGroups });
+                                                }}
+                                                className="text-red-500 hover:bg-red-50 p-1.5 rounded-lg mr-2"
+                                            >
+                                                <Trash2 className="w-4 h-4" />
+                                            </button>
+                                        </div>
+                                        <div className="flex gap-4 mb-3 text-xs" style={{ color: '#9C6A50' }}>
+                                            <label className="flex items-center gap-1 cursor-pointer">
+                                                <input type="checkbox" checked={group.isRequired} onChange={(e) => {
+                                                    const newGroups = [...itemForm.optionGroups];
+                                                    newGroups[groupIndex].isRequired = e.target.checked;
+                                                    setItemForm({ ...itemForm, optionGroups: newGroups });
+                                                }} /> إجباري؟
+                                            </label>
+                                            <label className="flex items-center gap-1 cursor-pointer">
+                                                <input type="checkbox" checked={group.isMultiple} onChange={(e) => {
+                                                    const newGroups = [...itemForm.optionGroups];
+                                                    newGroups[groupIndex].isMultiple = e.target.checked;
+                                                    setItemForm({ ...itemForm, optionGroups: newGroups });
+                                                }} /> متعدد الخيارات؟
+                                            </label>
+                                        </div>
+
+                                        {/* Options within group */}
+                                        <div className="space-y-2">
+                                            {group.options.map((opt, optIndex) => (
+                                                <div key={optIndex} className="flex items-center gap-2">
+                                                    <input
+                                                        placeholder="اسم الخيار (مثل: صغير)"
+                                                        value={opt.nameAr}
+                                                        onChange={(e) => {
+                                                            const newGroups = [...itemForm.optionGroups];
+                                                            newGroups[groupIndex].options[optIndex].nameAr = e.target.value;
+                                                            setItemForm({ ...itemForm, optionGroups: newGroups });
+                                                        }}
+                                                        className="flex-2 rounded-lg px-2 py-1.5 text-xs border focus:outline-none"
+                                                        style={{ borderColor: '#F0D1C4', flex: 2 }}
+                                                    />
+                                                    <div className="flex items-center rounded-lg border px-1" style={{ borderColor: '#F0D1C4', flex: 1 }}>
+                                                        <span className="text-xs text-gray-400 pl-1">+</span>
+                                                        <input
+                                                            type="number"
+                                                            placeholder="السعر الإضافي"
+                                                            value={opt.extraPrice}
+                                                            onChange={(e) => {
+                                                                const newGroups = [...itemForm.optionGroups];
+                                                                newGroups[groupIndex].options[optIndex].extraPrice = e.target.value;
+                                                                setItemForm({ ...itemForm, optionGroups: newGroups });
+                                                            }}
+                                                            className="w-full bg-transparent py-1.5 text-xs focus:outline-none text-center"
+                                                        />
+                                                    </div>
+                                                    <button
+                                                        onClick={() => {
+                                                            const newGroups = [...itemForm.optionGroups];
+                                                            newGroups[groupIndex].options = newGroups[groupIndex].options.filter((_, i) => i !== optIndex);
+                                                            setItemForm({ ...itemForm, optionGroups: newGroups });
+                                                        }}
+                                                        className="text-gray-400 hover:text-red-500 p-1"
+                                                    >
+                                                        ❌
+                                                    </button>
+                                                </div>
+                                            ))}
+                                            <button
+                                                onClick={() => {
+                                                    const newGroups = [...itemForm.optionGroups];
+                                                    newGroups[groupIndex].options.push({ nameAr: "", nameEn: "", extraPrice: "0", isDefault: false, isAvailable: true });
+                                                    setItemForm({ ...itemForm, optionGroups: newGroups });
+                                                }}
+                                                className="text-xs flex items-center gap-1 mt-2 font-bold px-2 py-1 rounded"
+                                                style={{ color: '#C4886D', backgroundColor: 'rgba(196,136,109,0.1)' }}
+                                            >
+                                                + خيار جديد
+                                            </button>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                         <div className="flex gap-2 mt-6">
                             <button onClick={saveItem} className="flex-1 text-white py-3 rounded-xl font-bold active:scale-95" style={{ backgroundColor: '#C4886D' }}>

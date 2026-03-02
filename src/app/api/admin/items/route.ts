@@ -32,7 +32,7 @@ export async function POST(request: Request) {
     const session = await getSession();
     if (!session) return NextResponse.json({ error: "غير مصرح" }, { status: 401 });
 
-    const { nameAr, nameEn, descriptionAr, price, categoryId, image } = await request.json();
+    const { nameAr, nameEn, descriptionAr, price, categoryId, image, optionGroups } = await request.json();
     if (!nameAr || !price || !categoryId) {
         return NextResponse.json({ error: "الاسم والسعر والتصنيف مطلوبين" }, { status: 400 });
     }
@@ -47,6 +47,25 @@ export async function POST(request: Request) {
             _max: { sortOrder: true },
         });
 
+        // Prepare nested option groups if provided
+        const optionGroupsData = optionGroups?.map((group: any, gIndex: number) => ({
+            nameAr: group.nameAr,
+            nameEn: group.nameEn || "",
+            isRequired: group.isRequired || false,
+            isMultiple: group.isMultiple || false,
+            sortOrder: gIndex + 1,
+            options: {
+                create: group.options?.map((opt: any, oIndex: number) => ({
+                    nameAr: opt.nameAr,
+                    nameEn: opt.nameEn || "",
+                    extraPrice: Number(parseFloat(opt.extraPrice?.toString() || "0").toFixed(2)),
+                    isDefault: opt.isDefault || false,
+                    isAvailable: opt.isAvailable !== false,
+                    sortOrder: oIndex + 1,
+                })) || []
+            }
+        })) || [];
+
         const item = await prisma.menuItem.create({
             data: {
                 nameAr,
@@ -56,8 +75,16 @@ export async function POST(request: Request) {
                 categoryId,
                 image: image || null,
                 sortOrder: (maxSort._max.sortOrder || 0) + 1,
+                optionGroups: {
+                    create: optionGroupsData
+                }
             },
-            include: { category: { select: { nameAr: true } } },
+            include: {
+                category: { select: { nameAr: true } },
+                optionGroups: {
+                    include: { options: true }
+                }
+            },
         });
         return NextResponse.json({ item }, { status: 201 });
     } catch (error: any) {
