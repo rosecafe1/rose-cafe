@@ -116,19 +116,19 @@ function MenuContent({ tableNumber }: { tableNumber: number }) {
 
                         {/* Search */}
                         <div className="relative">
-                            <Search className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: '#C4886D' }} />
+                            <Search className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: '#d1899a' }} />
                             <input
                                 type="text"
                                 placeholder="ابحث عن صنف..."
-                                style={{ backgroundColor: 'rgba(255,255,255,0.8)', border: '1px solid rgba(196,136,109,0.15)', color: '#3D2214', fontSize: '15px' }}
+                                style={{ backgroundColor: 'rgba(255,255,255,0.8)', border: '1px solid rgba(209,137,154,0.3)', color: '#9d3b54', fontSize: '15px' }}
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
-                                className="w-full rounded-xl pr-10 pl-10 py-3 placeholder-cafe-300/40 focus:outline-none focus:ring-2 focus:ring-cafe-300/30 transition-all"
+                                className="w-full font-medium rounded-xl pr-10 pl-10 py-3 placeholder:text-[#d1899a] focus:outline-none focus:ring-2 focus:ring-[#d1899a]/30 transition-all"
                             />
                             {search && (
                                 <button
                                     onClick={() => setSearch("")}
-                                    className="absolute left-3 top-1/2 -translate-y-1/2 text-cafe-300/50 hover:text-cafe-500 p-0.5"
+                                    className="absolute left-3 top-1/2 -translate-y-1/2 text-[#d1899a]/60 hover:text-[#9d3b54] p-0.5"
                                 >
                                     <X className="w-4 h-4" />
                                 </button>
