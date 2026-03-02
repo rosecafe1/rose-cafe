@@ -37,22 +37,31 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: "الاسم والسعر والتصنيف مطلوبين" }, { status: 400 });
     }
 
-    const maxSort = await prisma.menuItem.aggregate({
-        where: { categoryId },
-        _max: { sortOrder: true },
-    });
+    if (isNaN(Number(price)) || Number(price) > 99999999) {
+        return NextResponse.json({ error: "خطأ: السعر المدخل غير صالح أو تجاوز الحد الأقصى المسموح (8 أرقام)" }, { status: 400 });
+    }
 
-    const item = await prisma.menuItem.create({
-        data: {
-            nameAr,
-            nameEn: nameEn || "",
-            descriptionAr: descriptionAr || null,
-            price,
-            categoryId,
-            image: image || null,
-            sortOrder: (maxSort._max.sortOrder || 0) + 1,
-        },
-        include: { category: { select: { nameAr: true } } },
-    });
-    return NextResponse.json({ item }, { status: 201 });
+    try {
+        const maxSort = await prisma.menuItem.aggregate({
+            where: { categoryId },
+            _max: { sortOrder: true },
+        });
+
+        const item = await prisma.menuItem.create({
+            data: {
+                nameAr,
+                nameEn: nameEn || "",
+                descriptionAr: descriptionAr || null,
+                price,
+                categoryId,
+                image: image || null,
+                sortOrder: (maxSort._max.sortOrder || 0) + 1,
+            },
+            include: { category: { select: { nameAr: true } } },
+        });
+        return NextResponse.json({ item }, { status: 201 });
+    } catch (error: any) {
+        console.error("Create item error:", error);
+        return NextResponse.json({ error: "حدث خطأ غير متوقع أثناء الحفظ في قاعدة البيانات" }, { status: 500 });
+    }
 }

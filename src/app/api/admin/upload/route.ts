@@ -29,8 +29,13 @@ export async function POST(request: Request) {
     const ext = file.name.split(".").pop() || "jpg";
     const filename = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
 
-    // Ensure directory exists
-    const uploadDir = path.join(process.cwd(), "public", "uploads", "menu");
+    // In Next.js standalone mode, process.cwd() is .next/standalone. 
+    // Static files are served from the actual '/app/public' folder in docker
+    // We try multiple paths to be safe (Local dev vs Docker Prod)
+    const isProdContainer = process.env.NODE_ENV === 'production';
+    const baseDir = isProdContainer ? path.join('/app', 'public') : path.join(process.cwd(), "public");
+
+    const uploadDir = path.join(baseDir, "uploads", "menu");
     await mkdir(uploadDir, { recursive: true });
 
     // Save file
@@ -40,3 +45,4 @@ export async function POST(request: Request) {
     const url = `/uploads/menu/${filename}`;
     return NextResponse.json({ url }, { status: 201 });
 }
+

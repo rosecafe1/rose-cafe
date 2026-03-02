@@ -373,7 +373,7 @@ export default function MenuManager() {
                             {/* Image Upload */}
                             <div>
                                 <label className="text-gray-400 text-xs mb-1 block">صورة الصنف</label>
-                                <div className="flex items-center gap-3">
+                                <div className="w-full relative">
                                     {itemForm.image ? (
                                         <div className="relative">
                                             <img src={itemForm.image} alt="preview" className="w-20 h-20 rounded-xl object-cover" />
@@ -385,7 +385,7 @@ export default function MenuManager() {
                                     ) : (
                                         <div
                                             onClick={() => fileInputRef.current?.click()}
-                                            className="h-40 rounded-xl border-2 border-dashed flex flex-col items-center justify-center cursor-pointer hover:bg-white/50 transition-colors" style={{ borderColor: '#F0D1C4', backgroundColor: 'rgba(255,255,255,0.7)' }}>
+                                            className="w-full h-40 rounded-xl border-2 border-dashed flex flex-col items-center justify-center cursor-pointer hover:bg-white/50 transition-colors" style={{ borderColor: '#F0D1C4', backgroundColor: 'rgba(255,255,255,0.7)' }}>
                                             {uploading ? (
                                                 <div className="animate-spin w-5 h-5 border-2 border-cafe-300 border-t-transparent rounded-full"></div>
                                             ) : (
@@ -397,6 +397,15 @@ export default function MenuManager() {
                                         </div>
                                     )}
                                 </div>
+                                <input
+                                    type="file"
+                                    ref={fileInputRef}
+                                    className="hidden"
+                                    accept="image/*"
+                                    onChange={(e) => {
+                                        if (e.target.files?.[0]) handleImageUpload(e.target.files[0]);
+                                    }}
+                                />
                             </div>
 
                             <input placeholder="الاسم بالعربي *" value={itemForm.nameAr} onChange={(e) => setItemForm({ ...itemForm, nameAr: e.target.value })} className="w-full rounded-xl px-4 py-3 text-sm placeholder-gray-400 focus:outline-none" style={{ backgroundColor: 'rgba(255,255,255,0.7)', border: '1px solid #F0D1C4', color: '#5A3D2E' }} />

@@ -262,16 +262,16 @@ function ProductCard({ item, onTap }: { item: MenuItem; onTap: () => void }) {
                     <div onClick={(e) => e.stopPropagation()}>
                         {cartQty > 0 && !hasOptions ? (
                             <div className="flex items-center gap-1">
-                                <button onClick={handleDecrement} className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] active:scale-90 font-bold" style={{ backgroundColor: '#F5D5C8', color: '#9C6A50' }}>
+                                <button onClick={handleDecrement} className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] active:scale-90 font-bold" style={{ backgroundColor: '#FBDCE0', color: '#B35565' }}>
                                     −
                                 </button>
                                 <span className="text-cafe-800 font-bold text-[10px] w-3 text-center">{cartQty}</span>
-                                <button onClick={handleIncrement} className="w-5 h-5 rounded-full text-white flex items-center justify-center text-[10px] active:scale-90 font-bold" style={{ backgroundColor: '#C4886D' }}>
+                                <button onClick={handleIncrement} className="w-5 h-5 rounded-full text-white flex items-center justify-center text-[10px] active:scale-90 font-bold" style={{ backgroundColor: '#E88C9A' }}>
                                     +
                                 </button>
                             </div>
                         ) : (
-                            <button onClick={handleQuickAdd} className="w-6 h-6 rounded-full text-white flex items-center justify-center text-xs font-bold active:scale-90 transition-all shadow-md" style={{ backgroundColor: '#C4886D', boxShadow: '0 4px 10px rgba(196,136,109,0.3)' }}>
+                            <button onClick={handleQuickAdd} className="w-6 h-6 rounded-full text-white flex items-center justify-center text-xs font-bold active:scale-90 transition-all shadow-md" style={{ backgroundColor: '#E88C9A', boxShadow: '0 4px 10px rgba(232,140,154,0.3)' }}>
                                 +
                             </button>
                         )}

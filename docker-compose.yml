@@ -26,6 +26,8 @@ services:
       NEXTAUTH_SECRET: "your-super-secret-key-change-in-production-123"
     depends_on:
       - db
+    volumes:
+      - ./public/uploads:/app/public/uploads
 
 volumes:
   pgdata:
