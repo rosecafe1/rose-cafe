@@ -58,9 +58,9 @@ export async function GET(request: Request) {
             _avg: { totalAmount: true },
         });
 
-        const totalRevenue = revenueAgg._sum.totalAmount?.toNumber() || 0;
+        const totalRevenue = revenueAgg._sum.totalAmount || 0;
         const orderCount = revenueAgg._count || 0;
-        const avgOrder = revenueAgg._avg.totalAmount?.toNumber() || 0;
+        const avgOrder = revenueAgg._avg.totalAmount || 0;
 
         // 2. All orders count (including non-served but not cancelled)
         const allOrdersCount = await prisma.order.count({ where: whereNotCancelled });
@@ -86,7 +86,7 @@ export async function GET(request: Request) {
                     _sum: { unitPrice: true, quantity: true },
                 });
                 const totalQty = revenue._sum.quantity || 0;
-                const unitPrice = revenue._sum.unitPrice?.toNumber() || 0;
+                const unitPrice = revenue._sum.unitPrice || 0;
                 return {
                     name: item.itemNameAr,
                     quantity: item._sum.quantity || 0,
@@ -107,7 +107,7 @@ export async function GET(request: Request) {
         orders.forEach((order) => {
             const day = order.createdAt.toISOString().split("T")[0];
             const existing = dailySalesMap.get(day) || { revenue: 0, count: 0 };
-            existing.revenue += order.totalAmount.toNumber();
+            existing.revenue += order.totalAmount;
             existing.count += 1;
             dailySalesMap.set(day, existing);
         });
@@ -136,7 +136,7 @@ export async function GET(request: Request) {
             if (mi) {
                 const catName = mi.category.nameAr;
                 const existing = categoryMap.get(catName) || { revenue: 0, count: 0 };
-                existing.revenue += mi.price.toNumber() * (stat._sum.quantity || 0);
+                existing.revenue += mi.price * (stat._sum.quantity || 0);
                 existing.count += stat._sum.quantity || 0;
                 categoryMap.set(catName, existing);
             }

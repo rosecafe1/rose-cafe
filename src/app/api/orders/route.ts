@@ -88,7 +88,7 @@ export async function POST(request: Request) {
             const quantity = Math.max(1, Math.min(99, cartItem.quantity || 1));
 
             // Resolve options
-            const selectedOptionIds: number[] = cartItem.optionIds || [];
+            const selectedOptionIds: string[] = cartItem.optionIds || [];
             const allOptions = menuItem.optionGroups.flatMap((g) => g.options);
             const selectedOptions = allOptions.filter((o) => selectedOptionIds.includes(o.id));
 

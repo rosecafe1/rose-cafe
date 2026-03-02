@@ -20,34 +20,34 @@ async function main() {
     console.log("📂 إنشاء التصنيفات...");
     const categories = await Promise.all([
         prisma.category.upsert({
-            where: { id: 1 },
+            where: { id: String().padStart(24, '0') },
             update: {},
-            create: { id: 1, nameAr: "قهوة ساخنة", nameEn: "Hot Coffee", sortOrder: 1, image: "☕" },
+            create: { id: String().padStart(24, '0'), nameAr: "قهوة ساخنة", nameEn: "Hot Coffee", sortOrder: 1, image: "☕" },
         }),
         prisma.category.upsert({
-            where: { id: 2 },
+            where: { id: String().padStart(24, '0') },
             update: {},
-            create: { id: 2, nameAr: "قهوة باردة", nameEn: "Iced Coffee", sortOrder: 2, image: "🧊" },
+            create: { id: String().padStart(24, '0'), nameAr: "قهوة باردة", nameEn: "Iced Coffee", sortOrder: 2, image: "🧊" },
         }),
         prisma.category.upsert({
-            where: { id: 3 },
+            where: { id: String().padStart(24, '0') },
             update: {},
-            create: { id: 3, nameAr: "مشروبات طازجة", nameEn: "Fresh Drinks", sortOrder: 3, image: "🍊" },
+            create: { id: String().padStart(24, '0'), nameAr: "مشروبات طازجة", nameEn: "Fresh Drinks", sortOrder: 3, image: "🍊" },
         }),
         prisma.category.upsert({
-            where: { id: 4 },
+            where: { id: String().padStart(24, '0') },
             update: {},
-            create: { id: 4, nameAr: "شاي", nameEn: "Tea", sortOrder: 4, image: "🍵" },
+            create: { id: String().padStart(24, '0'), nameAr: "شاي", nameEn: "Tea", sortOrder: 4, image: "🍵" },
         }),
         prisma.category.upsert({
-            where: { id: 5 },
+            where: { id: String().padStart(24, '0') },
             update: {},
-            create: { id: 5, nameAr: "حلويات", nameEn: "Desserts", sortOrder: 5, image: "🍰" },
+            create: { id: String().padStart(24, '0'), nameAr: "حلويات", nameEn: "Desserts", sortOrder: 5, image: "🍰" },
         }),
         prisma.category.upsert({
-            where: { id: 6 },
+            where: { id: String().padStart(24, '0') },
             update: {},
-            create: { id: 6, nameAr: "سناكات", nameEn: "Snacks", sortOrder: 6, image: "🥐" },
+            create: { id: String().padStart(24, '0'), nameAr: "سناكات", nameEn: "Snacks", sortOrder: 6, image: "🥐" },
         }),
     ]);
 
@@ -56,286 +56,286 @@ async function main() {
 
     // === قهوة ساخنة ===
     const espresso = await prisma.menuItem.upsert({
-        where: { id: 1 },
+        where: { id: String().padStart(24, '0') },
         update: {},
         create: {
-            id: 1,
+            id: String().padStart(24, '0'),
             nameAr: "إسبريسو",
             nameEn: "Espresso",
             descriptionAr: "قهوة إسبريسو غنية ومركزة",
             price: 12,
-            categoryId: 1,
+            categoryId: String().padStart(24, '0'),
             sortOrder: 1,
         },
     });
 
     const latte = await prisma.menuItem.upsert({
-        where: { id: 2 },
+        where: { id: String().padStart(24, '0') },
         update: {},
         create: {
-            id: 2,
+            id: String().padStart(24, '0'),
             nameAr: "لاتيه",
             nameEn: "Latte",
             descriptionAr: "إسبريسو مع حليب مبخر ناعم",
             price: 18,
-            categoryId: 1,
+            categoryId: String().padStart(24, '0'),
             sortOrder: 2,
         },
     });
 
     const cappuccino = await prisma.menuItem.upsert({
-        where: { id: 3 },
+        where: { id: String().padStart(24, '0') },
         update: {},
         create: {
-            id: 3,
+            id: String().padStart(24, '0'),
             nameAr: "كابتشينو",
             nameEn: "Cappuccino",
             descriptionAr: "إسبريسو مع رغوة حليب كثيفة",
             price: 18,
-            categoryId: 1,
+            categoryId: String().padStart(24, '0'),
             sortOrder: 3,
         },
     });
 
     const americano = await prisma.menuItem.upsert({
-        where: { id: 4 },
+        where: { id: String().padStart(24, '0') },
         update: {},
         create: {
-            id: 4,
+            id: String().padStart(24, '0'),
             nameAr: "أمريكانو",
             nameEn: "Americano",
             descriptionAr: "إسبريسو مع ماء ساخن",
             price: 14,
-            categoryId: 1,
+            categoryId: String().padStart(24, '0'),
             sortOrder: 4,
         },
     });
 
     const mocha = await prisma.menuItem.upsert({
-        where: { id: 5 },
+        where: { id: String().padStart(24, '0') },
         update: {},
         create: {
-            id: 5,
+            id: String().padStart(24, '0'),
             nameAr: "موكا",
             nameEn: "Mocha",
             descriptionAr: "إسبريسو مع شوكولاتة وحليب",
             price: 22,
-            categoryId: 1,
+            categoryId: String().padStart(24, '0'),
             sortOrder: 5,
         },
     });
 
     const turkishCoffee = await prisma.menuItem.upsert({
-        where: { id: 6 },
+        where: { id: String().padStart(24, '0') },
         update: {},
         create: {
-            id: 6,
+            id: String().padStart(24, '0'),
             nameAr: "قهوة تركية",
             nameEn: "Turkish Coffee",
             descriptionAr: "قهوة تركية أصلية مع هيل",
             price: 10,
-            categoryId: 1,
+            categoryId: String().padStart(24, '0'),
             sortOrder: 6,
         },
     });
 
     // === قهوة باردة ===
     const icedLatte = await prisma.menuItem.upsert({
-        where: { id: 7 },
+        where: { id: String().padStart(24, '0') },
         update: {},
         create: {
-            id: 7,
+            id: String().padStart(24, '0'),
             nameAr: "آيس لاتيه",
             nameEn: "Iced Latte",
             descriptionAr: "لاتيه بارد منعش",
             price: 20,
-            categoryId: 2,
+            categoryId: String().padStart(24, '0'),
             sortOrder: 1,
         },
     });
 
     const icedAmericano = await prisma.menuItem.upsert({
-        where: { id: 8 },
+        where: { id: String().padStart(24, '0') },
         update: {},
         create: {
-            id: 8,
+            id: String().padStart(24, '0'),
             nameAr: "آيس أمريكانو",
             nameEn: "Iced Americano",
             descriptionAr: "أمريكانو بارد مع ثلج",
             price: 16,
-            categoryId: 2,
+            categoryId: String().padStart(24, '0'),
             sortOrder: 2,
         },
     });
 
     const coldBrew = await prisma.menuItem.upsert({
-        where: { id: 9 },
+        where: { id: String().padStart(24, '0') },
         update: {},
         create: {
-            id: 9,
+            id: String().padStart(24, '0'),
             nameAr: "كولد برو",
             nameEn: "Cold Brew",
             descriptionAr: "قهوة باردة مخمرة ببطء ٢٤ ساعة",
             price: 22,
-            categoryId: 2,
+            categoryId: String().padStart(24, '0'),
             sortOrder: 3,
         },
     });
 
     const frappe = await prisma.menuItem.upsert({
-        where: { id: 10 },
+        where: { id: String().padStart(24, '0') },
         update: {},
         create: {
-            id: 10,
+            id: String().padStart(24, '0'),
             nameAr: "فرابيه",
             nameEn: "Frappé",
             descriptionAr: "قهوة مثلجة كريمية",
             price: 24,
-            categoryId: 2,
+            categoryId: String().padStart(24, '0'),
             sortOrder: 4,
         },
     });
 
     // === مشروبات طازجة ===
     const orangeJuice = await prisma.menuItem.upsert({
-        where: { id: 11 },
+        where: { id: String().padStart(24, '0') },
         update: {},
         create: {
-            id: 11,
+            id: String().padStart(24, '0'),
             nameAr: "عصير برتقال طازج",
             nameEn: "Fresh Orange Juice",
             descriptionAr: "عصير برتقال طبيعي 100%",
             price: 15,
-            categoryId: 3,
+            categoryId: String().padStart(24, '0'),
             sortOrder: 1,
         },
     });
 
     const lemonade = await prisma.menuItem.upsert({
-        where: { id: 12 },
+        where: { id: String().padStart(24, '0') },
         update: {},
         create: {
-            id: 12,
+            id: String().padStart(24, '0'),
             nameAr: "ليموناضة",
             nameEn: "Lemonade",
             descriptionAr: "ليمون طازج مع نعناع",
             price: 14,
-            categoryId: 3,
+            categoryId: String().padStart(24, '0'),
             sortOrder: 2,
         },
     });
 
     const mojito = await prisma.menuItem.upsert({
-        where: { id: 13 },
+        where: { id: String().padStart(24, '0') },
         update: {},
         create: {
-            id: 13,
+            id: String().padStart(24, '0'),
             nameAr: "موهيتو",
             nameEn: "Mojito",
             descriptionAr: "نعناع مع ليمون وصودا",
             price: 18,
-            categoryId: 3,
+            categoryId: String().padStart(24, '0'),
             sortOrder: 3,
         },
     });
 
     // === شاي ===
     const tea = await prisma.menuItem.upsert({
-        where: { id: 14 },
+        where: { id: String().padStart(24, '0') },
         update: {},
         create: {
-            id: 14,
+            id: String().padStart(24, '0'),
             nameAr: "شاي أحمر",
             nameEn: "Black Tea",
             descriptionAr: "شاي أحمر كلاسيكي",
             price: 8,
-            categoryId: 4,
+            categoryId: String().padStart(24, '0'),
             sortOrder: 1,
         },
     });
 
     const greenTea = await prisma.menuItem.upsert({
-        where: { id: 15 },
+        where: { id: String().padStart(24, '0') },
         update: {},
         create: {
-            id: 15,
+            id: String().padStart(24, '0'),
             nameAr: "شاي أخضر",
             nameEn: "Green Tea",
             descriptionAr: "شاي أخضر ياباني",
             price: 10,
-            categoryId: 4,
+            categoryId: String().padStart(24, '0'),
             sortOrder: 2,
         },
     });
 
     const chaiLatte = await prisma.menuItem.upsert({
-        where: { id: 16 },
+        where: { id: String().padStart(24, '0') },
         update: {},
         create: {
-            id: 16,
+            id: String().padStart(24, '0'),
             nameAr: "تشاي لاتيه",
             nameEn: "Chai Latte",
             descriptionAr: "شاي بالتوابل مع حليب مبخر",
             price: 16,
-            categoryId: 4,
+            categoryId: String().padStart(24, '0'),
             sortOrder: 3,
         },
     });
 
     // === حلويات ===
     const cheesecake = await prisma.menuItem.upsert({
-        where: { id: 17 },
+        where: { id: String().padStart(24, '0') },
         update: {},
         create: {
-            id: 17,
+            id: String().padStart(24, '0'),
             nameAr: "تشيز كيك",
             nameEn: "Cheesecake",
             descriptionAr: "تشيز كيك كلاسيكي كريمي",
             price: 25,
-            categoryId: 5,
+            categoryId: String().padStart(24, '0'),
             sortOrder: 1,
         },
     });
 
     const brownie = await prisma.menuItem.upsert({
-        where: { id: 18 },
+        where: { id: String().padStart(24, '0') },
         update: {},
         create: {
-            id: 18,
+            id: String().padStart(24, '0'),
             nameAr: "براوني",
             nameEn: "Brownie",
             descriptionAr: "براوني شوكولاتة دافئ",
             price: 20,
-            categoryId: 5,
+            categoryId: String().padStart(24, '0'),
             sortOrder: 2,
         },
     });
 
     // === سناكات ===
     const croissant = await prisma.menuItem.upsert({
-        where: { id: 19 },
+        where: { id: String().padStart(24, '0') },
         update: {},
         create: {
-            id: 19,
+            id: String().padStart(24, '0'),
             nameAr: "كرواسان",
             nameEn: "Croissant",
             descriptionAr: "كرواسان زبدة فرنسي",
             price: 12,
-            categoryId: 6,
+            categoryId: String().padStart(24, '0'),
             sortOrder: 1,
         },
     });
 
     const clubSandwich = await prisma.menuItem.upsert({
-        where: { id: 20 },
+        where: { id: String().padStart(24, '0') },
         update: {},
         create: {
-            id: 20,
+            id: String().padStart(24, '0'),
             nameAr: "كلوب ساندويتش",
             nameEn: "Club Sandwich",
             descriptionAr: "ساندويتش دجاج مع خضار",
             price: 28,
-            categoryId: 6,
+            categoryId: String().padStart(24, '0'),
             sortOrder: 2,
         },
     });
@@ -346,53 +346,53 @@ async function main() {
     // خيار الحجم — للاتيه والكابتشينو والموكا
     for (const itemId of [2, 3, 5, 7, 10]) {
         const sizeGroup = await prisma.menuOptionGroup.upsert({
-            where: { id: itemId * 100 + 1 },
+            where: { id: String(itemId * 100 + 1).padStart(24, '0') },
             update: {},
             create: {
-                id: itemId * 100 + 1,
+                id: String(itemId * 100 + 1).padStart(24, '0'),
                 nameAr: "الحجم",
                 nameEn: "Size",
                 isRequired: true,
                 isMultiple: false,
-                menuItemId: itemId,
+                menuItemId: String(itemId).padStart(24, '0'),
                 sortOrder: 1,
             },
         });
 
         await prisma.menuOption.upsert({
-            where: { id: itemId * 1000 + 1 },
+            where: { id: String(itemId * 1000 + 1).padStart(24, '0') },
             update: {},
             create: {
-                id: itemId * 1000 + 1,
+                id: String(itemId * 1000 + 1).padStart(24, '0'),
                 nameAr: "صغير",
                 nameEn: "Small",
                 extraPrice: 0,
                 isDefault: true,
-                optionGroupId: sizeGroup.id,
+                optionGroupId: String(sizeGroup.id).padStart(24, '0'),
                 sortOrder: 1,
             },
         });
         await prisma.menuOption.upsert({
-            where: { id: itemId * 1000 + 2 },
+            where: { id: String(itemId * 1000 + 2).padStart(24, '0') },
             update: {},
             create: {
-                id: itemId * 1000 + 2,
+                id: String(itemId * 1000 + 2).padStart(24, '0'),
                 nameAr: "وسط",
                 nameEn: "Medium",
                 extraPrice: 3,
-                optionGroupId: sizeGroup.id,
+                optionGroupId: String(sizeGroup.id).padStart(24, '0'),
                 sortOrder: 2,
             },
         });
         await prisma.menuOption.upsert({
-            where: { id: itemId * 1000 + 3 },
+            where: { id: String(itemId * 1000 + 3).padStart(24, '0') },
             update: {},
             create: {
-                id: itemId * 1000 + 3,
+                id: String(itemId * 1000 + 3).padStart(24, '0'),
                 nameAr: "كبير",
                 nameEn: "Large",
                 extraPrice: 6,
-                optionGroupId: sizeGroup.id,
+                optionGroupId: String(sizeGroup.id).padStart(24, '0'),
                 sortOrder: 3,
             },
         });
@@ -401,53 +401,53 @@ async function main() {
     // خيار السكر — لكل القهوة الساخنة
     for (const itemId of [1, 2, 3, 4, 5, 6]) {
         const sugarGroup = await prisma.menuOptionGroup.upsert({
-            where: { id: itemId * 100 + 2 },
+            where: { id: String(itemId * 100 + 2).padStart(24, '0') },
             update: {},
             create: {
-                id: itemId * 100 + 2,
+                id: String(itemId * 100 + 2).padStart(24, '0'),
                 nameAr: "السكر",
                 nameEn: "Sugar",
                 isRequired: false,
                 isMultiple: false,
-                menuItemId: itemId,
+                menuItemId: String(itemId).padStart(24, '0'),
                 sortOrder: 2,
             },
         });
 
         await prisma.menuOption.upsert({
-            where: { id: itemId * 1000 + 10 },
+            where: { id: String(itemId * 1000 + 10).padStart(24, '0') },
             update: {},
             create: {
-                id: itemId * 1000 + 10,
+                id: String(itemId * 1000 + 10).padStart(24, '0'),
                 nameAr: "بدون سكر",
                 nameEn: "No Sugar",
                 extraPrice: 0,
-                optionGroupId: sugarGroup.id,
+                optionGroupId: String(sugarGroup.id).padStart(24, '0'),
                 sortOrder: 1,
             },
         });
         await prisma.menuOption.upsert({
-            where: { id: itemId * 1000 + 11 },
+            where: { id: String(itemId * 1000 + 11).padStart(24, '0') },
             update: {},
             create: {
-                id: itemId * 1000 + 11,
+                id: String(itemId * 1000 + 11).padStart(24, '0'),
                 nameAr: "سكر قليل",
                 nameEn: "Less Sugar",
                 extraPrice: 0,
-                optionGroupId: sugarGroup.id,
+                optionGroupId: String(sugarGroup.id).padStart(24, '0'),
                 sortOrder: 2,
             },
         });
         await prisma.menuOption.upsert({
-            where: { id: itemId * 1000 + 12 },
+            where: { id: String(itemId * 1000 + 12).padStart(24, '0') },
             update: {},
             create: {
-                id: itemId * 1000 + 12,
+                id: String(itemId * 1000 + 12).padStart(24, '0'),
                 nameAr: "سكر عادي",
                 nameEn: "Normal Sugar",
                 extraPrice: 0,
                 isDefault: true,
-                optionGroupId: sugarGroup.id,
+                optionGroupId: String(sugarGroup.id).padStart(24, '0'),
                 sortOrder: 3,
             },
         });
@@ -456,53 +456,53 @@ async function main() {
     // خيار الحليب — للاتيه والكابتشينو
     for (const itemId of [2, 3, 7]) {
         const milkGroup = await prisma.menuOptionGroup.upsert({
-            where: { id: itemId * 100 + 3 },
+            where: { id: String(itemId * 100 + 3).padStart(24, '0') },
             update: {},
             create: {
-                id: itemId * 100 + 3,
+                id: String(itemId * 100 + 3).padStart(24, '0'),
                 nameAr: "نوع الحليب",
                 nameEn: "Milk Type",
                 isRequired: false,
                 isMultiple: false,
-                menuItemId: itemId,
+                menuItemId: String(itemId).padStart(24, '0'),
                 sortOrder: 3,
             },
         });
 
         await prisma.menuOption.upsert({
-            where: { id: itemId * 1000 + 20 },
+            where: { id: String(itemId * 1000 + 20).padStart(24, '0') },
             update: {},
             create: {
-                id: itemId * 1000 + 20,
+                id: String(itemId * 1000 + 20).padStart(24, '0'),
                 nameAr: "حليب عادي",
                 nameEn: "Regular Milk",
                 extraPrice: 0,
                 isDefault: true,
-                optionGroupId: milkGroup.id,
+                optionGroupId: String(milkGroup.id).padStart(24, '0'),
                 sortOrder: 1,
             },
         });
         await prisma.menuOption.upsert({
-            where: { id: itemId * 1000 + 21 },
+            where: { id: String(itemId * 1000 + 21).padStart(24, '0') },
             update: {},
             create: {
-                id: itemId * 1000 + 21,
+                id: String(itemId * 1000 + 21).padStart(24, '0'),
                 nameAr: "حليب لوز",
                 nameEn: "Almond Milk",
                 extraPrice: 4,
-                optionGroupId: milkGroup.id,
+                optionGroupId: String(milkGroup.id).padStart(24, '0'),
                 sortOrder: 2,
             },
         });
         await prisma.menuOption.upsert({
-            where: { id: itemId * 1000 + 22 },
+            where: { id: String(itemId * 1000 + 22).padStart(24, '0') },
             update: {},
             create: {
-                id: itemId * 1000 + 22,
+                id: String(itemId * 1000 + 22).padStart(24, '0'),
                 nameAr: "حليب شوفان",
                 nameEn: "Oat Milk",
                 extraPrice: 5,
-                optionGroupId: milkGroup.id,
+                optionGroupId: String(milkGroup.id).padStart(24, '0'),
                 sortOrder: 3,
             },
         });
@@ -510,53 +510,53 @@ async function main() {
 
     // خيار إضافات — للكرواسان
     const fillingGroup = await prisma.menuOptionGroup.upsert({
-        where: { id: 1901 },
+        where: { id: String().padStart(24, '0') },
         update: {},
         create: {
-            id: 1901,
+            id: String().padStart(24, '0'),
             nameAr: "الحشوة",
             nameEn: "Filling",
             isRequired: true,
             isMultiple: false,
-            menuItemId: 19,
+            menuItemId: String().padStart(24, '0'),
             sortOrder: 1,
         },
     });
 
     await prisma.menuOption.upsert({
-        where: { id: 19001 },
+        where: { id: String().padStart(24, '0') },
         update: {},
         create: {
-            id: 19001,
+            id: String().padStart(24, '0'),
             nameAr: "سادة",
             nameEn: "Plain",
             extraPrice: 0,
             isDefault: true,
-            optionGroupId: fillingGroup.id,
+            optionGroupId: String(fillingGroup.id).padStart(24, '0'),
             sortOrder: 1,
         },
     });
     await prisma.menuOption.upsert({
-        where: { id: 19002 },
+        where: { id: String().padStart(24, '0') },
         update: {},
         create: {
-            id: 19002,
+            id: String().padStart(24, '0'),
             nameAr: "شوكولاتة",
             nameEn: "Chocolate",
             extraPrice: 3,
-            optionGroupId: fillingGroup.id,
+            optionGroupId: String(fillingGroup.id).padStart(24, '0'),
             sortOrder: 2,
         },
     });
     await prisma.menuOption.upsert({
-        where: { id: 19003 },
+        where: { id: String().padStart(24, '0') },
         update: {},
         create: {
-            id: 19003,
+            id: String().padStart(24, '0'),
             nameAr: "جبنة وزعتر",
             nameEn: "Cheese & Thyme",
             extraPrice: 5,
-            optionGroupId: fillingGroup.id,
+            optionGroupId: String(fillingGroup.id).padStart(24, '0'),
             sortOrder: 3,
         },
     });

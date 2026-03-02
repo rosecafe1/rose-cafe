@@ -12,8 +12,8 @@ export async function PATCH(
         return NextResponse.json({ error: "غير مصرح" }, { status: 401 });
     }
 
-    const orderId = parseInt(params.id);
-    if (isNaN(orderId)) {
+    const orderId = params.id;
+    if (!orderId) {
         return NextResponse.json({ error: "معرف غير صالح" }, { status: 400 });
     }
 

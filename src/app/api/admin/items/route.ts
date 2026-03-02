@@ -11,7 +11,7 @@ export async function GET(request: Request) {
     const categoryId = searchParams.get("categoryId");
 
     const where: any = {};
-    if (categoryId) where.categoryId = parseInt(categoryId);
+    if (categoryId) where.categoryId = categoryId;
 
     const items = await prisma.menuItem.findMany({
         where,

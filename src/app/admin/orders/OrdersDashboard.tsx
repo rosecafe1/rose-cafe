@@ -4,13 +4,13 @@ import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 
 interface OrderItemOption {
-    id: number;
+    id: string;
     optionNameAr: string;
     extraPrice: string;
 }
 
 interface OrderItem {
-    id: number;
+    id: string;
     itemNameAr: string;
     quantity: number;
     unitPrice: string;
@@ -19,7 +19,7 @@ interface OrderItem {
 }
 
 interface Order {
-    id: number;
+    id: string;
     orderNumber: string;
     status: string;
     notes: string | null;
@@ -126,7 +126,7 @@ export default function OrdersDashboard({ user }: Props) {
         return () => eventSource.close();
     }, [fetchOrders]);
 
-    const handleStatusChange = async (orderId: number, newStatus: string) => {
+    const handleStatusChange = async (orderId: string, newStatus: string) => {
         try {
             const res = await fetch(`/api/admin/orders/${orderId}`, {
                 method: "PATCH",

@@ -8,7 +8,7 @@ export async function PATCH(request: Request, { params }: { params: { id: string
 
     const data = await request.json();
     const table = await prisma.table.update({
-        where: { id: parseInt(params.id) },
+        where: { id: params.id },
         data: {
             ...(data.label !== undefined && { label: data.label }),
             ...(data.isActive !== undefined && { isActive: data.isActive }),
@@ -21,6 +21,6 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
     const session = await getSession();
     if (!session) return NextResponse.json({ error: "غير مصرح" }, { status: 401 });
 
-    await prisma.table.delete({ where: { id: parseInt(params.id) } });
+    await prisma.table.delete({ where: { id: params.id } });
     return NextResponse.json({ success: true });
 }

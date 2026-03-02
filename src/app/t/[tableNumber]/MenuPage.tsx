@@ -6,7 +6,7 @@ import ItemDetailModal from "@/components/ItemDetailModal";
 import CartSheet from "@/components/CartSheet";
 
 interface MenuOption {
-    id: number;
+    id: string;
     nameAr: string;
     nameEn: string;
     extraPrice: string;
@@ -14,7 +14,7 @@ interface MenuOption {
 }
 
 interface MenuOptionGroup {
-    id: number;
+    id: string;
     nameAr: string;
     nameEn: string;
     isRequired: boolean;
@@ -23,7 +23,7 @@ interface MenuOptionGroup {
 }
 
 interface MenuItem {
-    id: number;
+    id: string;
     nameAr: string;
     nameEn: string;
     descriptionAr: string | null;
@@ -34,7 +34,7 @@ interface MenuItem {
 }
 
 interface Category {
-    id: number;
+    id: string;
     nameAr: string;
     nameEn: string;
     image: string | null;

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useCart } from "@/lib/cart-context";
 
 interface MenuOption {
-    id: number;
+    id: string;
     nameAr: string;
     nameEn: string;
     extraPrice: string;
@@ -12,7 +12,7 @@ interface MenuOption {
 }
 
 interface MenuOptionGroup {
-    id: number;
+    id: string;
     nameAr: string;
     nameEn: string;
     isRequired: boolean;
@@ -21,7 +21,7 @@ interface MenuOptionGroup {
 }
 
 interface MenuItem {
-    id: number;
+    id: string;
     nameAr: string;
     nameEn: string;
     descriptionAr: string | null;
@@ -42,8 +42,8 @@ export default function ItemDetailModal({ item, onClose }: Props) {
     const [notes, setNotes] = useState("");
 
     // Track selected options: groupId -> optionId[] 
-    const [selectedOptions, setSelectedOptions] = useState<Record<number, number[]>>(() => {
-        const defaults: Record<number, number[]> = {};
+    const [selectedOptions, setSelectedOptions] = useState<Record<string, string[]>>(() => {
+        const defaults: Record<string, string[]> = {};
         item.optionGroups.forEach((g) => {
             const defaultOpt = g.options.find((o) => o.isDefault);
             if (defaultOpt) {
@@ -57,7 +57,7 @@ export default function ItemDetailModal({ item, onClose }: Props) {
         return defaults;
     });
 
-    const handleOptionChange = (group: MenuOptionGroup, optionId: number) => {
+    const handleOptionChange = (group: MenuOptionGroup, optionId: string) => {
         setSelectedOptions((prev) => {
             if (group.isMultiple) {
                 const current = prev[group.id] || [];
@@ -78,7 +78,7 @@ export default function ItemDetailModal({ item, onClose }: Props) {
     // Calculate total
     const basePrice = parseFloat(item.price);
     const optionsExtra = Object.entries(selectedOptions).reduce((sum, [groupId, optIds]) => {
-        const group = item.optionGroups.find((g) => g.id === parseInt(groupId));
+        const group = item.optionGroups.find((g) => g.id === groupId);
         if (!group) return sum;
         return sum + optIds.reduce((s, optId) => {
             const opt = group.options.find((o) => o.id === optId);
@@ -91,7 +91,7 @@ export default function ItemDetailModal({ item, onClose }: Props) {
         if (!isValid) return;
 
         const cartOptions = Object.entries(selectedOptions).flatMap(([groupId, optIds]) => {
-            const group = item.optionGroups.find((g) => g.id === parseInt(groupId));
+            const group = item.optionGroups.find((g) => g.id === groupId);
             if (!group) return [];
             return optIds.map((optId) => {
                 const opt = group.options.find((o) => o.id === optId)!;

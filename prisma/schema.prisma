@@ -1,4 +1,4 @@
-// Rose Cafe — Full Database Schema
+// Rose Cafe — Full Database Schema (MongoDB Version)
 // QR Table Ordering System
 
 generator client {
@@ -6,13 +6,13 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mongodb"
   url      = env("DATABASE_URL")
 }
 
 // ─── طاولات المقهى ───
 model Table {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
   number    Int      @unique
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
@@ -21,7 +21,7 @@ model Table {
 
 // ─── تصنيفات القائمة ───
 model Category {
-  id          Int        @id @default(autoincrement())
+  id          String     @id @default(auto()) @map("_id") @db.ObjectId
   nameAr      String
   nameEn      String     @default("")
   image       String?
@@ -34,31 +34,31 @@ model Category {
 
 // ─── عناصر القائمة ───
 model MenuItem {
-  id           Int               @id @default(autoincrement())
-  nameAr       String
-  nameEn       String            @default("")
+  id            String            @id @default(auto()) @map("_id") @db.ObjectId
+  nameAr        String
+  nameEn        String            @default("")
   descriptionAr String?
   descriptionEn String?
-  price        Decimal           @db.Decimal(10, 2)
-  image        String?
-  isAvailable  Boolean           @default(true)
-  sortOrder    Int               @default(0)
-  categoryId   Int
-  category     Category          @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-  createdAt    DateTime          @default(now())
-  updatedAt    DateTime          @updatedAt
-  optionGroups MenuOptionGroup[]
-  orderItems   OrderItem[]
+  price         Float
+  image         String?
+  isAvailable   Boolean           @default(true)
+  sortOrder     Int               @default(0)
+  categoryId    String            @db.ObjectId
+  category      Category          @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+  optionGroups  MenuOptionGroup[]
+  orderItems    OrderItem[]
 }
 
 // ─── مجموعة خيارات (مثل: الحجم، السكر، الحليب) ───
 model MenuOptionGroup {
-  id          Int          @id @default(autoincrement())
+  id          String       @id @default(auto()) @map("_id") @db.ObjectId
   nameAr      String
   nameEn      String       @default("")
   isRequired  Boolean      @default(false)
   isMultiple  Boolean      @default(false)  // true = اختيار متعدد, false = اختيار واحد
-  menuItemId  Int
+  menuItemId  String       @db.ObjectId
   menuItem    MenuItem     @relation(fields: [menuItemId], references: [id], onDelete: Cascade)
   sortOrder   Int          @default(0)
   createdAt   DateTime     @default(now())
@@ -67,15 +67,15 @@ model MenuOptionGroup {
 
 // ─── خيار فردي (مثل: صغير، وسط، كبير) ───
 model MenuOption {
-  id               Int              @id @default(autoincrement())
+  id               String            @id @default(auto()) @map("_id") @db.ObjectId
   nameAr           String
-  nameEn           String           @default("")
-  extraPrice       Decimal          @default(0) @db.Decimal(10, 2)
-  isDefault        Boolean          @default(false)
-  isAvailable      Boolean          @default(true)
-  optionGroupId    Int
-  optionGroup      MenuOptionGroup  @relation(fields: [optionGroupId], references: [id], onDelete: Cascade)
-  sortOrder        Int              @default(0)
+  nameEn           String            @default("")
+  extraPrice       Float             @default(0)
+  isDefault        Boolean           @default(false)
+  isAvailable      Boolean           @default(true)
+  optionGroupId    String            @db.ObjectId
+  optionGroup      MenuOptionGroup   @relation(fields: [optionGroupId], references: [id], onDelete: Cascade)
+  sortOrder        Int               @default(0)
   orderItemOptions OrderItemOption[]
 }
 
@@ -90,29 +90,29 @@ enum OrderStatus {
 
 // ─── الطلبات ───
 model Order {
-  id             Int         @id @default(autoincrement())
-  orderNumber    String      @unique @default(cuid())
-  tableId        Int
-  table          Table       @relation(fields: [tableId], references: [id])
-  status         OrderStatus @default(NEW)
-  notes          String?
-  totalAmount    Decimal     @db.Decimal(10, 2)
-  idempotencyKey String?     @unique
+  id              String      @id @default(auto()) @map("_id") @db.ObjectId
+  orderNumber     String      @unique @default(cuid())
+  tableId         String      @db.ObjectId
+  table           Table       @relation(fields: [tableId], references: [id])
+  status          OrderStatus @default(NEW)
+  notes           String?
+  totalAmount     Float
+  idempotencyKey  String?     @unique
   statusChangedBy String?
-  createdAt      DateTime    @default(now())
-  updatedAt      DateTime    @updatedAt
-  items          OrderItem[]
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  items           OrderItem[]
 }
 
 // ─── عناصر الطلب (مع snapshot) ───
 model OrderItem {
-  id            Int               @id @default(autoincrement())
-  orderId       Int
+  id            String            @id @default(auto()) @map("_id") @db.ObjectId
+  orderId       String            @db.ObjectId
   order         Order             @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  menuItemId    Int
+  menuItemId    String            @db.ObjectId
   menuItem      MenuItem          @relation(fields: [menuItemId], references: [id])
   quantity      Int               @default(1)
-  unitPrice     Decimal           @db.Decimal(10, 2)   // snapshot السعر وقت الطلب
+  unitPrice     Float             // snapshot السعر وقت الطلب
   itemNameAr    String            // snapshot الاسم وقت الطلب
   notes         String?
   options       OrderItemOption[]
@@ -120,18 +120,18 @@ model OrderItem {
 
 // ─── خيارات عنصر الطلب (مع snapshot) ───
 model OrderItemOption {
-  id            Int        @id @default(autoincrement())
-  orderItemId   Int
+  id            String     @id @default(auto()) @map("_id") @db.ObjectId
+  orderItemId   String     @db.ObjectId
   orderItem     OrderItem  @relation(fields: [orderItemId], references: [id], onDelete: Cascade)
-  menuOptionId  Int
+  menuOptionId  String     @db.ObjectId
   menuOption    MenuOption @relation(fields: [menuOptionId], references: [id])
   optionNameAr  String     // snapshot
-  extraPrice    Decimal    @db.Decimal(10, 2) // snapshot
+  extraPrice    Float      // snapshot
 }
 
 // ─── مستخدمي الأدمن ───
 model AdminUser {
-  id           Int      @id @default(autoincrement())
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
   username     String   @unique
   passwordHash String
   displayName  String

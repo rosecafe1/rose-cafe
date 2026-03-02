@@ -7,7 +7,7 @@ export async function PATCH(request: Request, { params }: { params: { id: string
     const session = await getSession();
     if (!session) return NextResponse.json({ error: "غير مصرح" }, { status: 401 });
 
-    const id = parseInt(params.id);
+    const id = params.id;
     const data = await request.json();
 
     const category = await prisma.category.update({
@@ -29,7 +29,7 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
     if (!session) return NextResponse.json({ error: "غير مصرح" }, { status: 401 });
 
     try {
-        await prisma.category.delete({ where: { id: parseInt(params.id) } });
+        await prisma.category.delete({ where: { id: params.id } });
         return NextResponse.json({ success: true });
     } catch (error: any) {
         console.error("Failed to delete category:", error);

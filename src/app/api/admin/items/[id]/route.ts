@@ -7,7 +7,7 @@ export async function PATCH(request: Request, { params }: { params: { id: string
     const session = await getSession();
     if (!session) return NextResponse.json({ error: "غير مصرح" }, { status: 401 });
 
-    const id = parseInt(params.id);
+    const id = params.id;
     const data = await request.json();
 
     const item = await prisma.menuItem.update({
@@ -31,6 +31,6 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
     const session = await getSession();
     if (!session) return NextResponse.json({ error: "غير مصرح" }, { status: 401 });
 
-    await prisma.menuItem.delete({ where: { id: parseInt(params.id) } });
+    await prisma.menuItem.delete({ where: { id: params.id } });
     return NextResponse.json({ success: true });
 }

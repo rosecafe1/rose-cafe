@@ -5,7 +5,7 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 
 interface Category {
-    id: number;
+    id: string;
     nameAr: string;
     nameEn: string;
     image: string | null;
@@ -14,14 +14,14 @@ interface Category {
 }
 
 interface MenuItem {
-    id: number;
+    id: string;
     nameAr: string;
     nameEn: string;
     descriptionAr: string | null;
     price: string;
     image: string | null;
     isAvailable: boolean;
-    categoryId: number;
+    categoryId: string;
     category: { nameAr: string };
 }
 
@@ -29,7 +29,7 @@ export default function MenuManager() {
     const router = useRouter();
     const [categories, setCategories] = useState<Category[]>([]);
     const [items, setItems] = useState<MenuItem[]>([]);
-    const [activeCategory, setActiveCategory] = useState<number | null>(null);
+    const [activeCategory, setActiveCategory] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
 
     // Modal states
@@ -40,7 +40,7 @@ export default function MenuManager() {
 
     // Form
     const [catForm, setCatForm] = useState({ nameAr: "", nameEn: "", image: "" });
-    const [itemForm, setItemForm] = useState({ nameAr: "", nameEn: "", descriptionAr: "", price: "", categoryId: 0, image: "" });
+    const [itemForm, setItemForm] = useState({ nameAr: "", nameEn: "", descriptionAr: "", price: "", categoryId: "", image: "" });
     const [uploading, setUploading] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -63,7 +63,7 @@ export default function MenuManager() {
         setLoading(false);
     };
 
-    const fetchItems = async (catId: number) => {
+    const fetchItems = async (catId: string) => {
         const res = await fetch(`/api/admin/items?categoryId=${catId}`);
         const data = await res.json();
         setItems(data.items || []);
@@ -152,7 +152,7 @@ export default function MenuManager() {
     // Item CRUD
     const openAddItem = () => {
         setEditItem(null);
-        setItemForm({ nameAr: "", nameEn: "", descriptionAr: "", price: "", categoryId: activeCategory || 0, image: "" });
+        setItemForm({ nameAr: "", nameEn: "", descriptionAr: "", price: "", categoryId: activeCategory || "", image: "" });
         setShowItemModal(true);
     };
 

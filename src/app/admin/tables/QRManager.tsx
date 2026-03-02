@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import QRCode from "qrcode";
 
 interface Table {
-    id: number;
+    id: string;
     number: number;
     label: string;
     isActive: boolean;

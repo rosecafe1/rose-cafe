@@ -3,14 +3,14 @@
 import { createContext, useContext, useState, ReactNode } from "react";
 
 export interface CartItemOption {
-    optionId: number;
+    optionId: string;
     nameAr: string;
     extraPrice: number;
 }
 
 export interface CartItem {
     id: string; // unique cart item id
-    menuItemId: number;
+    menuItemId: string;
     nameAr: string;
     basePrice: number;
     quantity: number;
