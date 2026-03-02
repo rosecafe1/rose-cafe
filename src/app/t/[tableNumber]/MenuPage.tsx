@@ -93,7 +93,8 @@ function MenuContent({ tableNumber }: { tableNumber: number }) {
     return (
         <div className="min-h-screen flex justify-center relative" style={{ background: 'linear-gradient(180deg, #FDF6F0 0%, #FCEEE8 30%, #FFF5EE 100%)' }}>
             {/* Background Image */}
-            <div className="fixed inset-0 z-0 pointer-events-none" style={{ backgroundImage: 'url(/images/menu-bg.png)', backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat', opacity: 0.08 }} />
+            <div className="fixed inset-0 z-0 pointer-events-none" style={{ backgroundImage: 'url(/images/menu-bg.png)', backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat', opacity: 0.18 }} />
+            <div className="fixed inset-0 z-0 pointer-events-none" style={{ background: 'linear-gradient(180deg, rgba(253,246,240,0.6) 0%, rgba(252,238,232,0.4) 40%, rgba(255,245,238,0.7) 100%)' }} />
             <div className="w-full max-w-[600px] min-h-screen pb-24 relative z-10" style={{ borderLeft: '1px solid rgba(196,136,109,0.08)', borderRight: '1px solid rgba(196,136,109,0.08)' }}>
 
                 {/* Header */}
