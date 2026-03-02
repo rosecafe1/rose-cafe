@@ -255,8 +255,12 @@ export default function MenuManager() {
                                     } ${!cat.isActive ? "opacity-50" : ""}`}
                                 onClick={() => setActiveCategory(cat.id)}
                             >
-                                <div className="flex items-center gap-2">
-                                    <span className="text-lg">{cat.image || "📁"}</span>
+                                <div className="flex items-center gap-3">
+                                    {cat.image && (cat.image.startsWith('http') || cat.image.startsWith('/')) ? (
+                                        <img src={cat.image} alt={cat.nameAr} className="w-10 h-10 rounded-full object-cover border border-[#F0D1C4]" />
+                                    ) : (
+                                        <span className="text-2xl">{cat.image || "📁"}</span>
+                                    )}
                                     <div className="flex flex-col">
                                         <span className="text-base font-bold" style={{ color: '#5A3D2E' }}>{cat.nameAr}</span>
                                         {cat.nameEn && <span className="text-gray-500 text-xs mt-0.5">{cat.nameEn}</span>}
@@ -305,7 +309,7 @@ export default function MenuManager() {
                                         <div className="flex items-center gap-3">
                                             {/* Item image thumbnail */}
                                             {item.image ? (
-                                                <img src={item.image} alt={item.nameAr} className="w-14 h-14 rounded-lg object-cover flex-shrink-0" />
+                                                <img src={item.image} alt={item.nameAr} className="w-14 h-14 rounded-lg object-cover flex-shrink-0" onError={(e) => { (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1497935586351-b67a49e012bf?auto=format&fit=crop&q=80&w=800'; }} />
                                             ) : (
                                                 <div className="w-14 h-14 rounded-lg flex items-center justify-center text-2xl" style={{ backgroundColor: '#FCEEE8' }}>
                                                     📷

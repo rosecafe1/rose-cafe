@@ -135,7 +135,11 @@ function MenuContent({ tableNumber }: { tableNumber: number }) {
                         <section key={cat.id} id={`cat-${cat.id}`}>
                             {/* Category Header */}
                             <div className="flex items-center gap-2 mb-3 px-1">
-                                <span className="text-xl">{cat.image}</span>
+                                {cat.image && (cat.image.startsWith('http') || cat.image.startsWith('/')) ? (
+                                    <img src={cat.image} alt={cat.nameAr} className="w-8 h-8 rounded-full object-cover shadow-sm" />
+                                ) : (
+                                    <span className="text-xl">{cat.image}</span>
+                                )}
                                 <h2 className="text-base font-bold text-cafe-800">{cat.nameAr}</h2>
                                 <span className="text-xs text-gray-500">({cat.items.length})</span>
                                 <div className="flex-1 h-[1px] mr-2" style={{ backgroundColor: '#EDCABC' }}></div>
@@ -224,6 +228,9 @@ function ProductCard({ item, onTap }: { item: MenuItem; onTap: () => void }) {
                         src={item.image}
                         alt={item.nameAr}
                         className="w-full h-full object-cover"
+                        onError={(e) => {
+                            (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1497935586351-b67a49e012bf?auto=format&fit=crop&q=80&w=800';
+                        }}
                     />
                 ) : (
                     <div className="w-full h-full flex items-center justify-center">
