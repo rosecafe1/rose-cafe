@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { ChefHat, Clock, CheckCircle2, XCircle, Utensils, LogOut, BarChart3, QrCode, Bell, BellRing, X, Menu, Printer } from "lucide-react";
+import { ChefHat, Clock, CheckCircle2, XCircle, Utensils, LogOut, BarChart3, QrCode, Bell, BellRing, BellOff, X, Menu, Printer } from "lucide-react";
 import InvoicePrint from "@/components/InvoicePrint";
 
 interface OrderItemOption {
@@ -86,6 +86,7 @@ export default function OrdersDashboard({ user }: Props) {
     const [connected, setConnected] = useState(false);
     const [toasts, setToasts] = useState<Toast[]>([]);
     const [printingOrder, setPrintingOrder] = useState<Order | null>(null);
+    const [notificationsEnabled, setNotificationsEnabled] = useState(true);
     const toastTimeouts = useRef<Record<string, NodeJS.Timeout>>({});
     const lastOrderCountRef = useRef<number>(-1);
 
@@ -160,21 +161,23 @@ export default function OrdersDashboard({ user }: Props) {
                 const currentCount = fetchedOrders.length;
                 if (lastOrderCountRef.current !== -1 && currentCount > lastOrderCountRef.current) {
                     // We have new orders! Create notification for the newest one
-                    playNotificationSound();
+                    if (notificationsEnabled) {
+                        playNotificationSound();
 
-                    const newestOrder = fetchedOrders[0];
-                    const tableNum = newestOrder?.table?.number || 0;
+                        const newestOrder = fetchedOrders[0];
+                        const tableNum = newestOrder?.table?.number || 0;
 
-                    if ("Notification" in window && Notification.permission === "granted") {
-                        new Notification("🔔 طلب جديد!", {
-                            body: tableNum ? `طاولة ${tableNum} أرسلت طلباً جديداً` : "تم استلام طلب جديد",
-                            icon: "/images/logo.png",
-                            tag: "new-order",
-                            requireInteraction: true,
-                        });
+                        if ("Notification" in window && Notification.permission === "granted") {
+                            new Notification("🔔 طلب جديد!", {
+                                body: tableNum ? `طاولة ${tableNum} أرسلت طلباً جديداً` : "تم استلام طلب جديد",
+                                icon: "/images/logo.png",
+                                tag: "new-order",
+                                requireInteraction: true,
+                            });
+                        }
+
+                        showToast("طلب جديد!", tableNum);
                     }
-
-                    showToast("طلب جديد!", tableNum);
                 }
                 lastOrderCountRef.current = currentCount;
             }
@@ -281,6 +284,13 @@ export default function OrdersDashboard({ user }: Props) {
                                 </div>
                             </div>
                             <div className="flex items-center gap-1">
+                                <button
+                                    onClick={() => setNotificationsEnabled(!notificationsEnabled)}
+                                    className={`p-2.5 rounded-xl transition-all ${notificationsEnabled ? "text-emerald-400 hover:bg-emerald-400/10" : "text-gray-400 hover:bg-gray-500/10"}`}
+                                    title={notificationsEnabled ? "إيقاف الإشعارات" : "تفعيل الإشعارات"}
+                                >
+                                    {notificationsEnabled ? <BellRing className="w-5 h-5" /> : <BellOff className="w-5 h-5" />}
+                                </button>
                                 <button onClick={() => router.push("/admin/accounting")} className="p-2.5 rounded-xl text-white/50 hover:text-white hover:bg-white/5 transition-all" title="المحاسبة">
                                     <BarChart3 className="w-5 h-5" />
                                 </button>
