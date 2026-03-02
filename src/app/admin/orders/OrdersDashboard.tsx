@@ -179,7 +179,7 @@ export default function OrdersDashboard({ user }: Props) {
             if ("Notification" in window && Notification.permission === "granted") {
                 new Notification("🔔 طلب جديد!", {
                     body: tableNum ? `طاولة ${tableNum} أرسلت طلباً جديداً` : "تم استلام طلب جديد",
-                    icon: "/images/logo.jpg",
+                    icon: "/images/logo.png",
                     tag: "new-order",
                     requireInteraction: true,
                 });

@@ -103,7 +103,7 @@ function MenuContent({ tableNumber }: { tableNumber: number }) {
                         <div className="flex items-center justify-between mb-3">
                             <div className="flex items-center gap-2.5">
                                 <div className="w-11 h-11 rounded-xl overflow-hidden shadow-warm border border-white/40">
-                                    <img src="/images/logo.jpg" alt="Rose Cafe" className="w-full h-full object-cover" />
+                                    <img src="/images/logo.png" alt="Rose Cafe" className="w-full h-full object-cover" />
                                 </div>
                                 <div>
                                     <h1 className="text-xl font-extrabold" style={{ color: '#3D2214' }}>Rose Cafe</h1>

@@ -3,7 +3,7 @@ export default function Home() {
         <main className="flex min-h-screen flex-col items-center justify-center p-6 text-center">
             <div className="max-w-md">
                 <img
-                    src="/images/logo.jpg"
+                    src="/images/logo.png"
                     alt="Rose Cafe"
                     className="w-40 h-40 mx-auto mb-6 drop-shadow-2xl"
                 />

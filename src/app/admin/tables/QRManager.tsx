@@ -55,7 +55,7 @@ export default function QRManager() {
                     await new Promise((resolve) => { qrImg.onload = resolve; });
                     ctx.drawImage(qrImg, 0, 0, 1000, 1000);
                     const logo = new Image();
-                    logo.src = "/images/logo.jpg";
+                    logo.src = "/images/logo.png";
                     await new Promise((resolve, reject) => { logo.onload = resolve; logo.onerror = reject; });
                     const logoSize = 250;
                     const x = (1000 - logoSize) / 2;
@@ -248,7 +248,7 @@ export default function QRManager() {
                             {qrImages[table.number] && (
                                 <img src={qrImages[table.number]} alt="" style={{ width: "100%", maxWidth: "180px", margin: "0 auto" }} />
                             )}
-                            <img src="/images/logo.jpg" alt="Rose Cafe" style={{ width: "50px", height: "50px", margin: "0 auto 2mm", borderRadius: "50%" }} />
+                            <img src="/images/logo.png" alt="Rose Cafe" style={{ width: "50px", height: "50px", margin: "0 auto 2mm", borderRadius: "50%" }} />
                             <p style={{ fontSize: "14px", fontWeight: "bold", color: "#3D2214" }}>روز كافيه</p>
                             <p style={{ fontSize: "22px", fontWeight: "bold", color: "#C4886D" }}>طاولة {table.number}</p>
                             <p style={{ fontSize: "10px", color: "#888", marginTop: "2mm" }}>امسح الكود للطلب</p>
