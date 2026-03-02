@@ -149,9 +149,6 @@ function MenuContent({ tableNumber }: { tableNumber: number }) {
                                     <span className="text-xl">{cat.image}</span>
                                 )}
                                 <h2 className="text-lg font-extrabold" style={{ color: '#3D2214' }}>{cat.nameAr}</h2>
-                                <span className="text-xs font-bold px-2 py-0.5 rounded-full" style={{ color: '#8B6F5E', backgroundColor: 'rgba(196,136,109,0.1)' }}>
-                                    {cat.items.length}
-                                </span>
                                 <div className="flex-1 h-[1px] mr-2" style={{ background: 'linear-gradient(to left, transparent, rgba(196,136,109,0.2))' }}></div>
                             </div>
 
