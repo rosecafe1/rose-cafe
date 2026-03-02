@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { ChefHat, Clock, CheckCircle2, XCircle, Utensils, LogOut, BarChart3, QrCode, Bell, BellRing, X, Menu } from "lucide-react";
+import { ChefHat, Clock, CheckCircle2, XCircle, Utensils, LogOut, BarChart3, QrCode, Bell, BellRing, X, Menu, Printer } from "lucide-react";
+import InvoicePrint from "@/components/InvoicePrint";
 
 interface OrderItemOption {
     id: string;
@@ -84,6 +85,7 @@ export default function OrdersDashboard({ user }: Props) {
     const [loading, setLoading] = useState(true);
     const [connected, setConnected] = useState(false);
     const [toasts, setToasts] = useState<Toast[]>([]);
+    const [printingOrder, setPrintingOrder] = useState<Order | null>(null);
     const toastTimeouts = useRef<Record<string, NodeJS.Timeout>>({});
 
     // Request notification permission on mount
@@ -216,6 +218,15 @@ export default function OrdersDashboard({ user }: Props) {
         router.push("/admin/login");
     };
 
+    const handlePrint = (order: Order) => {
+        setPrintingOrder(order);
+        setTimeout(() => {
+            window.print();
+            // Clear after printing to avoid showing it later accidentally
+            setTimeout(() => setPrintingOrder(null), 1000);
+        }, 100);
+    };
+
     const timeAgo = (dateStr: string) => {
         const diff = Date.now() - new Date(dateStr).getTime();
         const mins = Math.floor(diff / 60000);
@@ -227,6 +238,9 @@ export default function OrdersDashboard({ user }: Props) {
 
     return (
         <div className="admin-page">
+            {/* Hidden Printable Invoice */}
+            <InvoicePrint order={printingOrder} />
+
             {/* Toast Notifications */}
             <div className="fixed top-4 left-1/2 -translate-x-1/2 z-[100] flex flex-col gap-2 w-full max-w-md px-4">
                 {toasts.map((toast) => (
@@ -347,8 +361,17 @@ export default function OrdersDashboard({ user }: Props) {
                                                 </p>
                                             </div>
                                         </div>
-                                        <div className={`px-3 py-1 rounded-full text-xs font-bold border ${sc.bg} ${sc.text} ${sc.border}`}>
-                                            {STATUS_LABELS[order.status]}
+                                        <div className="flex gap-2 items-center">
+                                            <button
+                                                onClick={() => handlePrint(order)}
+                                                className="p-1.5 rounded-full text-white/50 hover:text-white hover:bg-white/10 transition-colors"
+                                                title="طباعة الفاتورة"
+                                            >
+                                                <Printer className="w-4 h-4" />
+                                            </button>
+                                            <div className={`px-3 py-1 rounded-full text-xs font-bold border ${sc.bg} ${sc.text} ${sc.border}`}>
+                                                {STATUS_LABELS[order.status]}
+                                            </div>
                                         </div>
                                     </div>
 

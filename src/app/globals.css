@@ -319,3 +319,12 @@ body {
   min-height: 100vh;
   color: var(--admin-text);
 }
+
+/* ─── Print Styles ─── */
+@media print {
+  body {
+    background-color: white !important;
+    color: black !important;
+    min-height: auto !important;
+  }
+}
