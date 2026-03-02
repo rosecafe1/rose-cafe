@@ -123,12 +123,9 @@ function MenuContent({ tableNumber }: { tableNumber: number }) {
                                 </div>
                             </div>
 
-                            {/* Decorative Flowers */}
-                            <div className="absolute right-4 top-4">
-                                <Flower2 className="w-12 h-12" style={{ color: '#b96b7e' }} strokeWidth={1.5} />
-                            </div>
-                            <div className="absolute left-4 top-16">
-                                <Flower2 className="w-10 h-10" style={{ color: '#b96b7e' }} strokeWidth={1.5} />
+                            {/* Decorative Image */}
+                            <div className="absolute right-0 top-0 opacity-80 mix-blend-multiply w-28 h-28 pointer-events-none">
+                                <img src="/images/girl-coffee.png" alt="Decoration" className="w-full h-full object-contain" />
                             </div>
 
                             <div className="w-24 h-24 rounded-full overflow-hidden shadow-warm border-2 border-white/60 mb-3 relative z-10" style={{ backgroundColor: '#FFF' }}>
