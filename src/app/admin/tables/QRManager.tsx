@@ -43,7 +43,7 @@ export default function QRManager() {
                 const url = `${baseUrl}/t/${table.number}`;
                 const qrDataUrl = await QRCode.toDataURL(url, {
                     width: 1000, margin: 2,
-                    color: { dark: "#C4886D", light: "#FFF8F4" },
+                    color: { dark: "#be185d", light: "#FFF1F2" },
                     errorCorrectionLevel: "H",
                 });
                 try {
@@ -62,9 +62,9 @@ export default function QRManager() {
                     const y = (1000 - logoSize) / 2;
                     ctx.beginPath();
                     ctx.arc(500, 500, logoSize / 2 + 15, 0, Math.PI * 2);
-                    ctx.fillStyle = "#FFF8F4";
+                    ctx.fillStyle = "#FFF1F2";
                     ctx.fill();
-                    ctx.strokeStyle = "#C4886D";
+                    ctx.strokeStyle = "#be185d";
                     ctx.lineWidth = 6;
                     ctx.stroke();
                     ctx.beginPath();
@@ -250,13 +250,13 @@ export default function QRManager() {
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "15mm", padding: "5mm" }}>
                     {tables.filter((t) => t.isActive).map((table) => (
                         <div key={table.id} style={{ textAlign: "center", pageBreakInside: "avoid", border: "2px solid #ddd", borderRadius: "12px", padding: "8mm" }}>
-                            <p style={{ fontSize: "24px", fontWeight: "bold", color: "#C4886D", marginBottom: "2mm", letterSpacing: "1px" }}>منـــيـــو</p>
+                            <p style={{ fontSize: "24px", fontWeight: "bold", color: "#be185d", marginBottom: "2mm", letterSpacing: "1px" }}>منـــيـــو</p>
 
                             {qrImages[table.number] && (
                                 <img src={qrImages[table.number]} alt="" style={{ width: "100%", maxWidth: "180px", margin: "0 auto" }} />
                             )}
 
-                            <p style={{ fontSize: "24px", fontWeight: "bold", color: "#C4886D", marginTop: "2mm", letterSpacing: "1px" }}>Menu</p>
+                            <p style={{ fontSize: "24px", fontWeight: "bold", color: "#be185d", marginTop: "2mm", letterSpacing: "1px" }}>Menu</p>
 
                             <p style={{ fontSize: "20px", fontWeight: "bold", color: "#3D2214", marginTop: "4mm" }}>طاولة {table.number}</p>
                         </div>
