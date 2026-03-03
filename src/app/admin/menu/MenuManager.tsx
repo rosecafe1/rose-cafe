@@ -199,7 +199,7 @@ export default function MenuManager() {
     };
 
     const saveItem = async () => {
-        const filledSizes = itemForm.sizes.filter(sz => sz.price !== "");
+        const filledSizes = itemForm.sizes.filter(sz => sz.name.trim() !== "");
         let finalPrice = itemForm.price;
         if (!finalPrice && filledSizes.length > 0) finalPrice = "0";
 
