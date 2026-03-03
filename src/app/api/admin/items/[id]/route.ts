@@ -80,6 +80,10 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
     const session = await getSession();
     if (!session) return NextResponse.json({ error: "غير مصرح" }, { status: 401 });
 
-    await prisma.menuItem.delete({ where: { id: params.id as string } });
-    return NextResponse.json({ success: true });
+    try {
+        await prisma.menuItem.delete({ where: { id: params.id as string } });
+        return NextResponse.json({ success: true });
+    } catch (error: any) {
+        return NextResponse.json({ error: "لا يمكن حذف هذا الصنف. قد يكون مرتبطاً بطلبات سابقة أو حدث خطأ داخلي." }, { status: 400 });
+    }
 }

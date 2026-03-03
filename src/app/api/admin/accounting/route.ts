@@ -125,8 +125,9 @@ export async function GET(request: Request) {
             _sum: { quantity: true },
         });
 
+        const validMenuIds = categoryStats.map((c) => c.menuItemId).filter((id): id is string => id !== null);
         const menuItems = await prisma.menuItem.findMany({
-            where: { id: { in: categoryStats.map((c) => c.menuItemId) } },
+            where: { id: { in: validMenuIds } },
             select: { id: true, price: true, category: { select: { nameAr: true } } },
         });
 

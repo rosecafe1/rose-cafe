@@ -251,7 +251,17 @@ export default function MenuManager() {
 
     const deleteItem = async (id: string) => {
         if (!confirm("حذف هذا الصنف؟")) return;
-        await fetch(`/api/admin/items/${id}`, { method: "DELETE" });
+        try {
+            const res = await fetch(`/api/admin/items/${id}`, { method: "DELETE" });
+            if (!res.ok) {
+                const data = await res.json();
+                alert(data.error || "خطأ في الاتصال بقاعدة البيانات. لا يمكن حذف الصنف.");
+                return;
+            }
+        } catch (e) {
+            alert("حدث خطأ أثناء الاتصال.");
+            return;
+        }
         fetchItems();
         fetchCategories();
     };

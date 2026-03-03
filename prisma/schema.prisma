@@ -109,8 +109,8 @@ model OrderItem {
   id            String            @id @default(auto()) @map("_id") @db.ObjectId
   orderId       String            @db.ObjectId
   order         Order             @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  menuItemId    String            @db.ObjectId
-  menuItem      MenuItem          @relation(fields: [menuItemId], references: [id])
+  menuItemId    String?           @db.ObjectId
+  menuItem      MenuItem?         @relation(fields: [menuItemId], references: [id], onDelete: SetNull)
   quantity      Int               @default(1)
   unitPrice     Float             // snapshot السعر وقت الطلب
   itemNameAr    String            // snapshot الاسم وقت الطلب
@@ -123,8 +123,8 @@ model OrderItemOption {
   id            String     @id @default(auto()) @map("_id") @db.ObjectId
   orderItemId   String     @db.ObjectId
   orderItem     OrderItem  @relation(fields: [orderItemId], references: [id], onDelete: Cascade)
-  menuOptionId  String     @db.ObjectId
-  menuOption    MenuOption @relation(fields: [menuOptionId], references: [id])
+  menuOptionId  String?    @db.ObjectId
+  menuOption    MenuOption? @relation(fields: [menuOptionId], references: [id], onDelete: SetNull)
   optionNameAr  String     // snapshot
   extraPrice    Float      // snapshot
 }
