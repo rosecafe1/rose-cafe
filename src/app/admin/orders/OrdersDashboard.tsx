@@ -441,7 +441,7 @@ export default function OrdersDashboard({ user }: Props) {
                                                         )}
                                                     </div>
                                                     <span className="text-white/40 text-xs font-mono">
-                                                        {(parseFloat(item.unitPrice) * item.quantity).toFixed(0)} ₪
+                                                        {((parseFloat(item.unitPrice) + item.options.reduce((sum, o) => sum + parseFloat(o.extraPrice || "0"), 0)) * item.quantity).toFixed(0)} ₪
                                                     </span>
                                                 </div>
                                             ))}

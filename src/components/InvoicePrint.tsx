@@ -88,7 +88,7 @@ export default function InvoicePrint({ order }: InvoicePrintProps) {
                                 </td>
                                 <td className="py-3 text-center align-top">{item.quantity}</td>
                                 <td className="py-3 text-left align-top font-mono">
-                                    {(parseFloat(item.unitPrice) * item.quantity).toFixed(0)} ₪
+                                    {((parseFloat(item.unitPrice) + item.options.reduce((sum, o) => sum + parseFloat(o.extraPrice || "0"), 0)) * item.quantity).toFixed(0)} ₪
                                 </td>
                             </tr>
                         ))}
