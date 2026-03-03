@@ -61,8 +61,14 @@ export default function MenuManager() {
     const [itemForm, setItemForm] = useState<{
         nameAr: string; nameEn: string; descriptionAr: string; price: string;
         categoryId: string; image: string; optionGroups: MenuOptionGroup[];
+        sizes: { name: string; price: string }[];
     }>({
-        nameAr: "", nameEn: "", descriptionAr: "", price: "", categoryId: "", image: "", optionGroups: []
+        nameAr: "", nameEn: "", descriptionAr: "", price: "", categoryId: "", image: "", optionGroups: [],
+        sizes: [
+            { name: "صغير", price: "" },
+            { name: "وسط", price: "" },
+            { name: "كبير", price: "" }
+        ]
     });
     const [uploading, setUploading] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -143,24 +149,78 @@ export default function MenuManager() {
     // Item CRUD
     const openAddItem = () => {
         setEditItem(null);
-        setItemForm({ nameAr: "", nameEn: "", descriptionAr: "", price: "", categoryId: activeCategory || "", image: "", optionGroups: [] });
+        setItemForm({
+            nameAr: "", nameEn: "", descriptionAr: "", price: "", categoryId: activeCategory || "", image: "", optionGroups: [],
+            sizes: [
+                { name: "صغير", price: "" },
+                { name: "وسط", price: "" },
+                { name: "كبير", price: "" }
+            ]
+        });
         setShowItemModal(true);
     };
 
     const openEditItem = (item: MenuItem) => {
         setEditItem(item);
+
+        let sizes = [
+            { name: "صغير", price: "" },
+            { name: "وسط", price: "" },
+            { name: "كبير", price: "" }
+        ];
+        let filteredOptionGroups = [...(item.optionGroups || [])];
+        const sizeGroupIndex = filteredOptionGroups.findIndex(g => g.nameAr === "الحجم" || g.nameAr === "الأحجام" || g.nameEn === "Size" || g.nameEn === "Sizes");
+
+        if (sizeGroupIndex !== -1) {
+            const sizeGroup = filteredOptionGroups[sizeGroupIndex];
+            sizes = [
+                { name: sizeGroup.options[0]?.nameAr || "صغير", price: sizeGroup.options[0]?.extraPrice?.toString() || "" },
+                { name: sizeGroup.options[1]?.nameAr || "وسط", price: sizeGroup.options[1]?.extraPrice?.toString() || "" },
+                { name: sizeGroup.options[2]?.nameAr || "كبير", price: sizeGroup.options[2]?.extraPrice?.toString() || "" },
+            ];
+            filteredOptionGroups.splice(sizeGroupIndex, 1);
+        }
+
         setItemForm({
             nameAr: item.nameAr, nameEn: item.nameEn,
-            descriptionAr: item.descriptionAr || "", price: item.price,
+            descriptionAr: item.descriptionAr || "", price: item.price.toString(),
             categoryId: item.categoryId, image: item.image || "",
-            optionGroups: item.optionGroups || []
+            optionGroups: filteredOptionGroups,
+            sizes
         });
         setShowItemModal(true);
     };
 
     const saveItem = async () => {
-        if (!itemForm.nameAr.trim() || !itemForm.price || !itemForm.categoryId) return;
-        const payload = { ...itemForm };
+        const filledSizes = itemForm.sizes.filter(sz => sz.price !== "");
+        let finalPrice = itemForm.price;
+        if (!finalPrice && filledSizes.length > 0) finalPrice = "0";
+
+        if (!itemForm.nameAr.trim() || !finalPrice || !itemForm.categoryId) {
+            alert("يرجى إدخال اسم الصنف والسعر والتصنيف");
+            return;
+        }
+
+        const finalOptionGroups = [...itemForm.optionGroups];
+        if (filledSizes.length > 0) {
+            finalOptionGroups.unshift({
+                nameAr: "الحجم",
+                nameEn: "Size",
+                isRequired: true,
+                isMultiple: false,
+                options: filledSizes.map((sz, i) => ({
+                    nameAr: sz.name || `حجم ${i + 1}`,
+                    nameEn: sz.name || `Size ${i + 1}`,
+                    extraPrice: sz.price,
+                    isDefault: i === 0,
+                    isAvailable: true
+                }))
+            });
+        }
+
+        const payload = { ...itemForm, price: finalPrice, optionGroups: finalOptionGroups };
+        delete (payload as any).sizes;
+
         if (editItem) {
             await fetch(`/api/admin/items/${editItem.id}`, {
                 method: "PATCH",
@@ -445,7 +505,40 @@ export default function MenuManager() {
                             <input placeholder="الاسم بالعربي *" value={itemForm.nameAr} onChange={(e) => setItemForm({ ...itemForm, nameAr: e.target.value })} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-white/20 focus:outline-none focus:border-cafe-400/50 transition-all" />
                             <input placeholder="الاسم بالإنجليزي" value={itemForm.nameEn} onChange={(e) => setItemForm({ ...itemForm, nameEn: e.target.value })} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-white/20 focus:outline-none focus:border-cafe-400/50 transition-all" />
                             <input placeholder="الوصف (اختياري)" value={itemForm.descriptionAr} onChange={(e) => setItemForm({ ...itemForm, descriptionAr: e.target.value })} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-white/20 focus:outline-none focus:border-cafe-400/50 transition-all" />
-                            <input type="number" placeholder="السعر (₪) *" value={itemForm.price} onChange={(e) => setItemForm({ ...itemForm, price: e.target.value })} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-white/20 focus:outline-none focus:border-cafe-400/50 transition-all" />
+                            <input type="number" placeholder="السعر الأساسي (₪) *" value={itemForm.price} onChange={(e) => setItemForm({ ...itemForm, price: e.target.value })} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-white/20 focus:outline-none focus:border-cafe-400/50 transition-all" />
+
+                            {/* ── Quick Sizes ── */}
+                            <div className="bg-white/[0.02] border border-white/5 rounded-xl p-4 space-y-3 mt-4">
+                                <h4 className="text-white/50 text-xs font-bold mb-1 flex items-center gap-1.5"><Layers className="w-3.5 h-3.5" /> الأحجام والأسعار الإضافية (اختياري)</h4>
+                                <p className="text-white/30 text-[10px] mb-2 leading-relaxed">إذا قمت بإضافة أحجام، يمكنك ترك السعر الأساسي فارغاً.</p>
+                                <div className="space-y-2">
+                                    {itemForm.sizes.map((sz, idx) => (
+                                        <div key={idx} className="flex gap-2">
+                                            <input
+                                                placeholder="اسم الحجم (صغير، وسط...)"
+                                                value={sz.name}
+                                                onChange={(e) => {
+                                                    const newSizes = [...itemForm.sizes];
+                                                    newSizes[idx].name = e.target.value;
+                                                    setItemForm({ ...itemForm, sizes: newSizes });
+                                                }}
+                                                className="w-1/2 bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder-white/20 focus:outline-none focus:border-cafe-400/50 transition-all"
+                                            />
+                                            <input
+                                                type="number"
+                                                placeholder="السعر (₪)"
+                                                value={sz.price}
+                                                onChange={(e) => {
+                                                    const newSizes = [...itemForm.sizes];
+                                                    newSizes[idx].price = e.target.value;
+                                                    setItemForm({ ...itemForm, sizes: newSizes });
+                                                }}
+                                                className="w-1/2 bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder-white/20 focus:outline-none focus:border-cafe-400/50 transition-all"
+                                            />
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
 
                             {/* ── Advanced Options ── */}
                             <div className="pt-3 mt-3" style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}>
