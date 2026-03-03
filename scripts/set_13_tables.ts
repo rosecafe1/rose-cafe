@@ -22,7 +22,6 @@ async function main() {
             await prisma.table.create({
                 data: {
                     number: i,
-                    label: `طاولة ${i}`,
                     isActive: true
                 }
             });
