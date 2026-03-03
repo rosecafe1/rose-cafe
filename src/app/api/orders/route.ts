@@ -63,7 +63,7 @@ export async function POST(request: Request) {
         }
 
         // Fetch all menu items with options
-        const menuItemIds = items.map((i: any) => i.menuItemId);
+        const menuItemIds = Array.from(new Set(items.map((i: any) => i.menuItemId))) as string[];
         const menuItems = await prisma.menuItem.findMany({
             where: { id: { in: menuItemIds }, isAvailable: true },
             include: {
