@@ -171,7 +171,7 @@ export default function ItemDetailModal({ item, onClose }: Props) {
                                                 </div>
                                                 {parseFloat(opt.extraPrice) > 0 && (
                                                     <span className={`text-xs ${isSelected ? "font-bold" : ""}`} style={{ color: '#C4886D' }}>
-                                                        +{parseFloat(opt.extraPrice).toFixed(0)} ₪
+                                                        {basePrice > 0 ? "+" : ""}{parseFloat(opt.extraPrice).toFixed(0)} ₪
                                                     </span>
                                                 )}
                                             </button>
