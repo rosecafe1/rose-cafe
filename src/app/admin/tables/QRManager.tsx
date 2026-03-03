@@ -57,7 +57,7 @@ export default function QRManager() {
                     const logo = new Image();
                     logo.src = "/images/logo.png";
                     await new Promise((resolve, reject) => { logo.onload = resolve; logo.onerror = reject; });
-                    const logoSize = 250;
+                    const logoSize = 320;
                     const x = (1000 - logoSize) / 2;
                     const y = (1000 - logoSize) / 2;
                     ctx.beginPath();
