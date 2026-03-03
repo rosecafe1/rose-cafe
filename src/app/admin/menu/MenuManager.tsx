@@ -61,13 +61,13 @@ export default function MenuManager() {
     const [itemForm, setItemForm] = useState<{
         nameAr: string; nameEn: string; descriptionAr: string; price: string;
         categoryId: string; image: string; optionGroups: MenuOptionGroup[];
-        sizes: { name: string; price: string }[];
+        sizes: { name: string; price: string; pieces: string }[];
     }>({
         nameAr: "", nameEn: "", descriptionAr: "", price: "", categoryId: "", image: "", optionGroups: [],
         sizes: [
-            { name: "صغير", price: "" },
-            { name: "وسط", price: "" },
-            { name: "كبير", price: "" }
+            { name: "صغير", price: "", pieces: "" },
+            { name: "وسط", price: "", pieces: "" },
+            { name: "كبير", price: "", pieces: "" }
         ]
     });
     const [uploading, setUploading] = useState(false);
@@ -152,9 +152,9 @@ export default function MenuManager() {
         setItemForm({
             nameAr: "", nameEn: "", descriptionAr: "", price: "", categoryId: activeCategory || "", image: "", optionGroups: [],
             sizes: [
-                { name: "صغير", price: "" },
-                { name: "وسط", price: "" },
-                { name: "كبير", price: "" }
+                { name: "صغير", price: "", pieces: "" },
+                { name: "وسط", price: "", pieces: "" },
+                { name: "كبير", price: "", pieces: "" }
             ]
         });
         setShowItemModal(true);
@@ -164,20 +164,27 @@ export default function MenuManager() {
         setEditItem(item);
 
         let sizes = [
-            { name: "صغير", price: "" },
-            { name: "وسط", price: "" },
-            { name: "كبير", price: "" }
+            { name: "صغير", price: "", pieces: "" },
+            { name: "وسط", price: "", pieces: "" },
+            { name: "كبير", price: "", pieces: "" }
         ];
         let filteredOptionGroups = [...(item.optionGroups || [])];
         const sizeGroupIndex = filteredOptionGroups.findIndex(g => g.nameAr === "الحجم" || g.nameAr === "الأحجام" || g.nameEn === "Size" || g.nameEn === "Sizes");
 
         if (sizeGroupIndex !== -1) {
+            const extractPieces = (name: string) => {
+                const match = name.match(/ \((.*?) حبة\)/) || name.match(/ \((.*?) حبات\)/);
+                if (match) return { baseName: name.replace(match[0], ''), pieces: match[1] };
+                return { baseName: name, pieces: "" };
+            };
+
             const sizeGroup = filteredOptionGroups[sizeGroupIndex];
-            sizes = [
-                { name: sizeGroup.options[0]?.nameAr || "صغير", price: sizeGroup.options[0]?.extraPrice?.toString() || "" },
-                { name: sizeGroup.options[1]?.nameAr || "وسط", price: sizeGroup.options[1]?.extraPrice?.toString() || "" },
-                { name: sizeGroup.options[2]?.nameAr || "كبير", price: sizeGroup.options[2]?.extraPrice?.toString() || "" },
-            ];
+            sizes = [0, 1, 2].map(i => {
+                const opt = sizeGroup.options[i];
+                if (!opt) return sizes[i];
+                const extracted = extractPieces(opt.nameAr);
+                return { name: extracted.baseName || sizes[i].name, price: opt.extraPrice?.toString() || "", pieces: extracted.pieces };
+            });
             filteredOptionGroups.splice(sizeGroupIndex, 1);
         }
 
@@ -208,13 +215,16 @@ export default function MenuManager() {
                 nameEn: "Size",
                 isRequired: true,
                 isMultiple: false,
-                options: filledSizes.map((sz, i) => ({
-                    nameAr: sz.name || `حجم ${i + 1}`,
-                    nameEn: sz.name || `Size ${i + 1}`,
-                    extraPrice: sz.price,
-                    isDefault: i === 0,
-                    isAvailable: true
-                }))
+                options: filledSizes.map((sz, i) => {
+                    const piecesText = sz.pieces.trim() ? ` (${sz.pieces} ${parseInt(sz.pieces) > 10 || parseInt(sz.pieces) == 1 || parseInt(sz.pieces) == 2 ? 'حبة' : 'حبات'})` : '';
+                    return {
+                        nameAr: (sz.name || `حجم ${i + 1}`) + piecesText,
+                        nameEn: (sz.name || `Size ${i + 1}`) + piecesText,
+                        extraPrice: sz.price,
+                        isDefault: i === 0,
+                        isAvailable: true
+                    };
+                })
             });
         }
 
@@ -505,24 +515,35 @@ export default function MenuManager() {
                             <input placeholder="الاسم بالعربي *" value={itemForm.nameAr} onChange={(e) => setItemForm({ ...itemForm, nameAr: e.target.value })} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-white/20 focus:outline-none focus:border-cafe-400/50 transition-all" />
                             <input placeholder="الاسم بالإنجليزي" value={itemForm.nameEn} onChange={(e) => setItemForm({ ...itemForm, nameEn: e.target.value })} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-white/20 focus:outline-none focus:border-cafe-400/50 transition-all" />
                             <input placeholder="الوصف (اختياري)" value={itemForm.descriptionAr} onChange={(e) => setItemForm({ ...itemForm, descriptionAr: e.target.value })} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-white/20 focus:outline-none focus:border-cafe-400/50 transition-all" />
-                            <input type="number" placeholder="السعر الأساسي (₪) *" value={itemForm.price} onChange={(e) => setItemForm({ ...itemForm, price: e.target.value })} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-white/20 focus:outline-none focus:border-cafe-400/50 transition-all" />
+                            <input type="number" placeholder={itemForm.sizes.some(s => s.price) ? "السعر الأساسي (₪) - اختياري لأنك اخترت أحجام" : "السعر الأساسي (₪) *"} value={itemForm.price} onChange={(e) => setItemForm({ ...itemForm, price: e.target.value })} className={`w-full bg-white/5 border ${itemForm.sizes.some(s => s.price) && !itemForm.price ? 'border-white/5 dashed' : 'border-white/10'} rounded-xl px-4 py-3 text-sm text-white placeholder-white/20 focus:outline-none focus:border-cafe-400/50 transition-all`} />
 
                             {/* ── Quick Sizes ── */}
                             <div className="bg-white/[0.02] border border-white/5 rounded-xl p-4 space-y-3 mt-4">
                                 <h4 className="text-white/50 text-xs font-bold mb-1 flex items-center gap-1.5"><Layers className="w-3.5 h-3.5" /> الأحجام والأسعار الإضافية (اختياري)</h4>
-                                <p className="text-white/30 text-[10px] mb-2 leading-relaxed">إذا قمت بإضافة أحجام، يمكنك ترك السعر الأساسي فارغاً.</p>
+                                <p className="text-white/30 text-[10px] mb-2 leading-relaxed">أضف حبات أو سعر لأي حجم ليتم اعتماده. إذا أضفت حجماً، يمكنك ترك "السعر الأساسي" فارغاً وسيتم اعتماد أسعار الأحجام.</p>
                                 <div className="space-y-2">
                                     {itemForm.sizes.map((sz, idx) => (
                                         <div key={idx} className="flex gap-2">
                                             <input
-                                                placeholder="اسم الحجم (صغير، وسط...)"
+                                                placeholder="الحجم"
                                                 value={sz.name}
                                                 onChange={(e) => {
                                                     const newSizes = [...itemForm.sizes];
                                                     newSizes[idx].name = e.target.value;
                                                     setItemForm({ ...itemForm, sizes: newSizes });
                                                 }}
-                                                className="w-1/2 bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder-white/20 focus:outline-none focus:border-cafe-400/50 transition-all"
+                                                className="w-1/3 bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder-white/20 focus:outline-none focus:border-cafe-400/50 transition-all"
+                                            />
+                                            <input
+                                                type="number"
+                                                placeholder="الحبات (اختياري)"
+                                                value={sz.pieces}
+                                                onChange={(e) => {
+                                                    const newSizes = [...itemForm.sizes];
+                                                    newSizes[idx].pieces = e.target.value;
+                                                    setItemForm({ ...itemForm, sizes: newSizes });
+                                                }}
+                                                className="w-1/3 bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder-white/20 focus:outline-none focus:border-cafe-400/50 transition-all"
                                             />
                                             <input
                                                 type="number"
@@ -533,7 +554,7 @@ export default function MenuManager() {
                                                     newSizes[idx].price = e.target.value;
                                                     setItemForm({ ...itemForm, sizes: newSizes });
                                                 }}
-                                                className="w-1/2 bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder-white/20 focus:outline-none focus:border-cafe-400/50 transition-all"
+                                                className="w-1/3 bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-sm text-white placeholder-white/20 focus:outline-none focus:border-cafe-400/50 transition-all"
                                             />
                                         </div>
                                     ))}
