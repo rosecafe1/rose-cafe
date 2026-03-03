@@ -281,7 +281,7 @@ function ProductCard({ item, onTap, delay }: { item: MenuItem; onTap: () => void
 
                 {/* Price + Add */}
                 <div className="flex items-center justify-between mt-auto pt-2">
-                    <span className="font-extrabold text-sm" style={{ color: '#C4886D' }}>
+                    <span className="font-extrabold text-sm" style={{ color: '#C4886D', minWidth: '1rem' }}>
                         {parseFloat(item.price) > 0 ? `${parseFloat(item.price).toFixed(0)} ₪` : ""}
                     </span>
 
