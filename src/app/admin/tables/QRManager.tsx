@@ -243,16 +243,13 @@ export default function QRManager() {
             <div className="hidden print:block" ref={printRef}>
                 <style>{`
                     @media print {
-                        @page { margin: 10mm; }
-                        body { background: white !important; color: black !important; }
+                        @page { margin: 0; }
+                        body { background: white !important; color: black !important; padding: 10mm; }
                     }
                 `}</style>
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "15mm", padding: "5mm" }}>
                     {tables.filter((t) => t.isActive).map((table) => (
                         <div key={table.id} style={{ textAlign: "center", pageBreakInside: "avoid", border: "2px solid #ddd", borderRadius: "12px", padding: "8mm" }}>
-                            <img src="/images/logo.png" alt="Rose Cafe" style={{ width: "50px", height: "50px", margin: "0 auto 2mm", borderRadius: "50%" }} />
-                            <p style={{ fontSize: "14px", fontWeight: "bold", color: "#3D2214", marginBottom: "2mm" }}>روز كافيه</p>
-
                             <p style={{ fontSize: "24px", fontWeight: "bold", color: "#C4886D", marginBottom: "2mm", letterSpacing: "1px" }}>منـــيـــو</p>
 
                             {qrImages[table.number] && (
