@@ -179,11 +179,9 @@ export default function MenuManager() {
             };
 
             const sizeGroup = filteredOptionGroups[sizeGroupIndex];
-            sizes = [0, 1, 2].map(i => {
-                const opt = sizeGroup.options[i];
-                if (!opt) return sizes[i];
+            sizes = sizeGroup.options.map(opt => {
                 const extracted = extractPieces(opt.nameAr);
-                return { name: extracted.baseName || sizes[i].name, price: opt.extraPrice?.toString() || "", pieces: extracted.pieces };
+                return { name: extracted.baseName, price: opt.extraPrice?.toString() || "", pieces: extracted.pieces };
             });
             filteredOptionGroups.splice(sizeGroupIndex, 1);
         }
