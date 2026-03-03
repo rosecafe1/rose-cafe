@@ -109,7 +109,12 @@ export default function QRManager() {
         fetchTables();
     };
 
-    const handlePrint = () => { window.print(); };
+    const handlePrint = () => {
+        const originalTitle = document.title;
+        document.title = "Rose_Cafe_Tables_QR_Menu";
+        window.print();
+        document.title = originalTitle;
+    };
 
     if (loading) {
         return (
@@ -158,7 +163,7 @@ export default function QRManager() {
                         </button>
                         <button onClick={handlePrint} className="flex items-center gap-1.5 text-sm px-4 py-2.5 rounded-xl font-bold transition-all active:scale-95 text-white/50 hover:text-white border border-white/10 hover:border-white/20 hover:bg-white/5">
                             <Printer className="w-4 h-4" />
-                            طباعة الكل
+                            طباعة / حفظ كـ PDF
                         </button>
                     </div>
 
@@ -245,13 +250,18 @@ export default function QRManager() {
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "15mm", padding: "5mm" }}>
                     {tables.filter((t) => t.isActive).map((table) => (
                         <div key={table.id} style={{ textAlign: "center", pageBreakInside: "avoid", border: "2px solid #ddd", borderRadius: "12px", padding: "8mm" }}>
+                            <img src="/images/logo.png" alt="Rose Cafe" style={{ width: "50px", height: "50px", margin: "0 auto 2mm", borderRadius: "50%" }} />
+                            <p style={{ fontSize: "14px", fontWeight: "bold", color: "#3D2214", marginBottom: "2mm" }}>روز كافيه</p>
+
+                            <p style={{ fontSize: "24px", fontWeight: "bold", color: "#C4886D", marginBottom: "2mm", letterSpacing: "1px" }}>منـــيـــو</p>
+
                             {qrImages[table.number] && (
                                 <img src={qrImages[table.number]} alt="" style={{ width: "100%", maxWidth: "180px", margin: "0 auto" }} />
                             )}
-                            <img src="/images/logo.png" alt="Rose Cafe" style={{ width: "50px", height: "50px", margin: "0 auto 2mm", borderRadius: "50%" }} />
-                            <p style={{ fontSize: "14px", fontWeight: "bold", color: "#3D2214" }}>روز كافيه</p>
-                            <p style={{ fontSize: "22px", fontWeight: "bold", color: "#C4886D" }}>طاولة {table.number}</p>
-                            <p style={{ fontSize: "10px", color: "#888", marginTop: "2mm" }}>امسح الكود للطلب</p>
+
+                            <p style={{ fontSize: "24px", fontWeight: "bold", color: "#C4886D", marginTop: "2mm", letterSpacing: "1px" }}>Menu</p>
+
+                            <p style={{ fontSize: "20px", fontWeight: "bold", color: "#3D2214", marginTop: "4mm" }}>طاولة {table.number}</p>
                         </div>
                     ))}
                 </div>
