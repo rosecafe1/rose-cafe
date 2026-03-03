@@ -387,7 +387,9 @@ export default function MenuManager() {
                                             {item.nameEn && <p className="text-white/30 text-xs truncate">{item.nameEn}</p>}
                                             {item.descriptionAr && <p className="text-white/20 text-xs mt-0.5 truncate">{item.descriptionAr}</p>}
                                             <div className="flex items-center gap-2 mt-2">
-                                                <span className="text-cafe-300 font-bold text-sm">{parseFloat(item.price).toFixed(0)} ₪</span>
+                                                <span className="text-cafe-300 font-bold text-sm">
+                                                    {parseFloat(item.price) > 0 ? `${parseFloat(item.price).toFixed(0)} ₪` : ""}
+                                                </span>
                                                 {item.optionGroups && item.optionGroups.length > 0 && (
                                                     <span className="text-[10px] text-amber-400/60 bg-amber-500/10 px-1.5 py-0.5 rounded-full border border-amber-500/10">
                                                         <Settings2 className="w-2.5 h-2.5 inline ml-0.5" />{item.optionGroups.length} خيار
