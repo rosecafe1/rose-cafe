@@ -23,7 +23,7 @@ export default function QRManager() {
     const printRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        setBaseUrl(window.location.origin);
+        setBaseUrl("https://www.rosecafe.store");
         fetchTables();
     }, []);
 

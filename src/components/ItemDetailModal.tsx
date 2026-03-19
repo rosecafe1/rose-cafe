@@ -191,7 +191,7 @@ export default function ItemDetailModal({ item, onClose }: Props) {
                                 value={notes}
                                 onChange={(e) => setNotes(e.target.value)}
                                 placeholder="أي طلب خاص؟ (اختياري)"
-                                className="w-full rounded-xl px-4 py-3 text-sm placeholder-cafe-300/30 focus:outline-none focus:ring-2 focus:ring-cafe-300/20 resize-none h-20 transition-all"
+                                className="w-full rounded-xl px-4 py-3 text-base font-bold placeholder-cafe-300/40 focus:outline-none focus:ring-2 focus:ring-cafe-300/20 resize-none h-20 transition-all font-cairo"
                                 style={{ backgroundColor: '#FFF8F4', border: '1px solid rgba(196,136,109,0.1)', color: '#3D2214' }}
                             />
                         </div>
