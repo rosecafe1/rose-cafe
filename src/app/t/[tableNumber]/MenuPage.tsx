@@ -1,9 +1,5 @@
-"use client";
-
 import { useState, useEffect } from "react";
-import { CartProvider, useCart } from "@/lib/cart-context";
 import ItemDetailModal from "@/components/ItemDetailModal";
-import CartSheet from "@/components/CartSheet";
 import { Search, X, Flower2 } from "lucide-react";
 
 interface MenuOption {
@@ -44,9 +40,7 @@ interface Category {
 
 export default function MenuPage({ tableNumber }: { tableNumber: number }) {
     return (
-        <CartProvider>
-            <MenuContent tableNumber={tableNumber} />
-        </CartProvider>
+        <MenuContent tableNumber={tableNumber} />
     );
 }
 
@@ -195,44 +189,13 @@ function MenuContent({ tableNumber }: { tableNumber: number }) {
                 {selectedItem && (
                     <ItemDetailModal item={selectedItem} onClose={() => setSelectedItem(null)} />
                 )}
-
-                {/* Cart Sheet */}
-                <CartSheet tableNumber={tableNumber} />
             </div>
         </div>
     );
 }
 
 function ProductCard({ item, onTap, delay }: { item: MenuItem; onTap: () => void; delay: number }) {
-    const { addItem, items: cartItems, updateQuantity, removeItem } = useCart();
-
-    const cartEntry = cartItems.find((ci) => ci.menuItemId === item.id);
-    const cartQty = cartEntry?.quantity || 0;
     const hasOptions = item.optionGroups.length > 0;
-
-    const handleQuickAdd = (e: React.MouseEvent) => {
-        e.stopPropagation();
-        if (hasOptions) { onTap(); return; }
-        addItem({
-            menuItemId: item.id,
-            nameAr: item.nameAr,
-            basePrice: parseFloat(item.price),
-            quantity: 1,
-            options: [],
-            notes: "",
-        });
-    };
-
-    const handleIncrement = (e: React.MouseEvent) => {
-        e.stopPropagation();
-        if (cartEntry) updateQuantity(cartEntry.id, cartQty + 1);
-    };
-
-    const handleDecrement = (e: React.MouseEvent) => {
-        e.stopPropagation();
-        if (cartEntry && cartQty > 1) updateQuantity(cartEntry.id, cartQty - 1);
-        else if (cartEntry) removeItem(cartEntry.id);
-    };
 
     return (
         <div
@@ -257,13 +220,6 @@ function ProductCard({ item, onTap, delay }: { item: MenuItem; onTap: () => void
                     </div>
                 )}
 
-                {/* Cart badge */}
-                {cartQty > 0 && (
-                    <div className="absolute top-1.5 right-1.5 w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-white shadow-lg animate-scale-in" style={{ background: 'linear-gradient(135deg, #C4886D, #D4A76A)' }}>
-                        {cartQty}
-                    </div>
-                )}
-
                 {/* Options badge */}
                 {hasOptions && (
                     <div className="absolute top-1.5 left-1.5 glass px-2 py-0.5 rounded-md text-[10px] font-bold" style={{ color: '#9C6A50' }}>
@@ -279,29 +235,11 @@ function ProductCard({ item, onTap, delay }: { item: MenuItem; onTap: () => void
                     <p className="text-xs mt-0.5 line-clamp-1" style={{ color: '#8B6F5E' }}>{item.descriptionAr}</p>
                 )}
 
-                {/* Price + Add */}
-                <div className="flex items-center justify-between mt-auto pt-2">
+                {/* Price */}
+                <div className="flex items-center justify-start mt-auto pt-2">
                     <span className="font-extrabold text-sm" style={{ color: '#C4886D' }}>
                         {parseFloat(item.price) > 0 ? `${parseFloat(item.price).toFixed(0)} ₪` : ""}
                     </span>
-
-                    <div onClick={(e) => e.stopPropagation()}>
-                        {cartQty > 0 && !hasOptions ? (
-                            <div className="flex items-center gap-1">
-                                <button onClick={handleDecrement} className="w-6 h-6 rounded-full flex items-center justify-center text-xs active:scale-90 font-bold transition-all" style={{ backgroundColor: '#FBDCE0', color: '#B35565' }}>
-                                    −
-                                </button>
-                                <span className="font-bold text-xs w-5 text-center" style={{ color: '#3D2214' }}>{cartQty}</span>
-                                <button onClick={handleIncrement} className="w-6 h-6 rounded-full text-white flex items-center justify-center text-xs active:scale-90 font-bold transition-all shadow-sm" style={{ background: 'linear-gradient(135deg, #E88C9A, #C4886D)' }}>
-                                    +
-                                </button>
-                            </div>
-                        ) : (
-                            <button onClick={handleQuickAdd} className="w-7 h-7 rounded-full text-white flex items-center justify-center text-sm font-bold active:scale-90 transition-all shadow-md animate-pulse-glow" style={{ background: 'linear-gradient(135deg, #E88C9A, #C4886D)' }}>
-                                +
-                            </button>
-                        )}
-                    </div>
                 </div>
             </div>
         </div>
