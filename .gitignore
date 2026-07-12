@@ -26,6 +26,10 @@ yarn-error.log*
 # vercel
 .vercel
 
+# deployment secrets — NEVER commit
+DEPLOY_SECRETS.local.md
+.deploy/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
