@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useEffect } from "react";
 import ItemDetailModal from "@/components/ItemDetailModal";
 import { Search, X, Flower2 } from "lucide-react";
