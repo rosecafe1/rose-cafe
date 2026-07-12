@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import QRCode from "qrcode";
-import { QrCode, Plus, Printer, Trash2, Eye, EyeOff, X, ArrowLeft, ChefHat, ClipboardList } from "lucide-react";
+import { QrCode, Plus, Printer, Trash2, Eye, EyeOff, X, ChefHat } from "lucide-react";
 
 interface Table {
     id: string;
@@ -144,9 +144,6 @@ export default function QRManager() {
                             </div>
                         </div>
                         <div className="flex items-center gap-1">
-                            <button onClick={() => router.push("/admin/orders")} className="p-2.5 rounded-xl text-white/50 hover:text-white hover:bg-white/5 transition-all" title="الطلبات">
-                                <ClipboardList className="w-5 h-5" />
-                            </button>
                             <button onClick={() => router.push("/admin/menu")} className="p-2.5 rounded-xl text-white/50 hover:text-white hover:bg-white/5 transition-all" title="القائمة">
                                 <ChefHat className="w-5 h-5" />
                             </button>

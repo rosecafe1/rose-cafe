@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { Plus, Pencil, Trash2, X, Upload, Image as ImageIcon, ChevronDown, ChefHat, Eye, EyeOff, Package, Layers, Settings2, ArrowLeft } from "lucide-react";
+import { Plus, Pencil, Trash2, X, Upload, Image as ImageIcon, ChevronDown, ChefHat, Eye, EyeOff, Package, Layers, Settings2, QrCode } from "lucide-react";
 
 interface Category {
     id: string;
@@ -298,9 +298,9 @@ export default function MenuManager() {
                             <p className="text-xs text-white/30">{categories.length} تصنيف</p>
                         </div>
                     </div>
-                    <button onClick={() => router.push("/admin/orders")} className="flex items-center gap-1.5 text-sm text-white/50 hover:text-white px-3 py-2 rounded-xl hover:bg-white/5 transition-all">
-                        <ArrowLeft className="w-4 h-4" />
-                        الطلبات
+                    <button onClick={() => router.push("/admin/tables")} className="flex items-center gap-1.5 text-sm text-white/50 hover:text-white px-3 py-2 rounded-xl hover:bg-white/5 transition-all" title="QR">
+                        <QrCode className="w-4 h-4" />
+                        QR
                     </button>
                 </div>
             </header>
