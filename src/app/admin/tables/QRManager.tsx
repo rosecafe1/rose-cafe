@@ -1,131 +1,72 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import QRCode from "qrcode";
-import { QrCode, Plus, Printer, Trash2, Eye, EyeOff, X, ChefHat } from "lucide-react";
+import { QrCode, Printer, Download, ChefHat } from "lucide-react";
 
-interface Table {
-    id: string;
-    number: number;
-    label: string;
-    isActive: boolean;
-}
+const SITE_URL = "https://www.rosecafe.store/";
 
 export default function QRManager() {
     const router = useRouter();
-    const [tables, setTables] = useState<Table[]>([]);
+    const [qrImage, setQrImage] = useState<string>("");
     const [loading, setLoading] = useState(true);
-    const [qrImages, setQrImages] = useState<Record<number, string>>({});
-    const [baseUrl, setBaseUrl] = useState("");
-    const [showAddModal, setShowAddModal] = useState(false);
-    const [newTableNum, setNewTableNum] = useState("");
-    const printRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        setBaseUrl("https://www.rosecafe.store");
-        fetchTables();
+        const generateQR = async () => {
+            const qrDataUrl = await QRCode.toDataURL(SITE_URL, {
+                width: 1000, margin: 2,
+                color: { dark: "#be185d", light: "#FFF1F2" },
+                errorCorrectionLevel: "H",
+            });
+            try {
+                const canvas = document.createElement("canvas");
+                canvas.width = 1000; canvas.height = 1000;
+                const ctx = canvas.getContext("2d")!;
+                const qrImg = new Image();
+                qrImg.src = qrDataUrl;
+                await new Promise((resolve) => { qrImg.onload = resolve; });
+                ctx.drawImage(qrImg, 0, 0, 1000, 1000);
+                const logo = new Image();
+                logo.src = "/images/logo.png";
+                await new Promise((resolve, reject) => { logo.onload = resolve; logo.onerror = reject; });
+                const logoSize = 320;
+                const x = (1000 - logoSize) / 2;
+                const y = (1000 - logoSize) / 2;
+                ctx.beginPath();
+                ctx.arc(500, 500, logoSize / 2 + 15, 0, Math.PI * 2);
+                ctx.fillStyle = "#FFF1F2";
+                ctx.fill();
+                ctx.strokeStyle = "#be185d";
+                ctx.lineWidth = 6;
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.arc(500, 500, logoSize / 2, 0, Math.PI * 2);
+                ctx.clip();
+                ctx.drawImage(logo, x, y, logoSize, logoSize);
+                setQrImage(canvas.toDataURL("image/png"));
+            } catch {
+                setQrImage(qrDataUrl);
+            }
+            setLoading(false);
+        };
+        generateQR();
     }, []);
 
-    const fetchTables = async () => {
-        const res = await fetch("/api/admin/tables");
-        if (res.status === 401) { router.push("/admin/login"); return; }
-        const data = await res.json();
-        setTables(data.tables || []);
-        setLoading(false);
-    };
-
-    useEffect(() => {
-        if (!baseUrl || tables.length === 0) return;
-        const generateQRs = async () => {
-            const images: Record<number, string> = {};
-            for (const table of tables) {
-                const url = `${baseUrl}/t/${table.number}`;
-                const qrDataUrl = await QRCode.toDataURL(url, {
-                    width: 1000, margin: 2,
-                    color: { dark: "#be185d", light: "#FFF1F2" },
-                    errorCorrectionLevel: "H",
-                });
-                try {
-                    const canvas = document.createElement("canvas");
-                    canvas.width = 1000; canvas.height = 1000;
-                    const ctx = canvas.getContext("2d")!;
-                    const qrImg = new Image();
-                    qrImg.src = qrDataUrl;
-                    await new Promise((resolve) => { qrImg.onload = resolve; });
-                    ctx.drawImage(qrImg, 0, 0, 1000, 1000);
-                    const logo = new Image();
-                    logo.src = "/images/logo.png";
-                    await new Promise((resolve, reject) => { logo.onload = resolve; logo.onerror = reject; });
-                    const logoSize = 320;
-                    const x = (1000 - logoSize) / 2;
-                    const y = (1000 - logoSize) / 2;
-                    ctx.beginPath();
-                    ctx.arc(500, 500, logoSize / 2 + 15, 0, Math.PI * 2);
-                    ctx.fillStyle = "#FFF1F2";
-                    ctx.fill();
-                    ctx.strokeStyle = "#be185d";
-                    ctx.lineWidth = 6;
-                    ctx.stroke();
-                    ctx.beginPath();
-                    ctx.arc(500, 500, logoSize / 2, 0, Math.PI * 2);
-                    ctx.clip();
-                    ctx.drawImage(logo, x, y, logoSize, logoSize);
-                    images[table.number] = canvas.toDataURL("image/png");
-                } catch {
-                    images[table.number] = qrDataUrl;
-                }
-            }
-            setQrImages(images);
-        };
-        generateQRs();
-    }, [tables, baseUrl]);
-
-    const addTable = async () => {
-        const num = parseInt(newTableNum);
-        if (!num || num < 1) return;
-        await fetch("/api/admin/tables", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ number: num }),
-        });
-        setShowAddModal(false);
-        setNewTableNum("");
-        fetchTables();
-    };
-
-    const toggleTable = async (table: Table) => {
-        await fetch(`/api/admin/tables/${table.id}`, {
-            method: "PATCH",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ isActive: !table.isActive }),
-        });
-        fetchTables();
-    };
-
-    const deleteTable = async (table: Table) => {
-        if (!confirm(`حذف طاولة ${table.number}؟`)) return;
-        await fetch(`/api/admin/tables/${table.id}`, { method: "DELETE" });
-        fetchTables();
+    const handleDownload = () => {
+        if (!qrImage) return;
+        const link = document.createElement("a");
+        link.href = qrImage;
+        link.download = "Rose_Cafe_Menu_QR.png";
+        link.click();
     };
 
     const handlePrint = () => {
         const originalTitle = document.title;
-        document.title = "Rose_Cafe_Tables_QR_Menu";
+        document.title = "Rose_Cafe_Menu_QR";
         window.print();
         document.title = originalTitle;
     };
-
-    if (loading) {
-        return (
-            <div className="admin-page flex items-center justify-center">
-                <div className="text-center">
-                    <div className="animate-spin w-10 h-10 border-3 border-cafe-500/30 border-t-cafe-400 rounded-full mx-auto mb-4"></div>
-                    <p className="text-white/30 text-sm">جاري التحميل...</p>
-                </div>
-            </div>
-        );
-    }
 
     return (
         <>
@@ -139,8 +80,8 @@ export default function QRManager() {
                                 <QrCode className="w-5 h-5 text-white" />
                             </div>
                             <div>
-                                <h1 className="text-base font-bold text-white">QR الطاولات</h1>
-                                <p className="text-xs text-white/30">{tables.length} طاولة</p>
+                                <h1 className="text-base font-bold text-white">QR المنيو</h1>
+                                <p className="text-xs text-white/30">رمز واحد للقائمة</p>
                             </div>
                         </div>
                         <div className="flex items-center gap-1">
@@ -151,113 +92,52 @@ export default function QRManager() {
                     </div>
                 </header>
 
-                <div className="max-w-5xl mx-auto px-4 mt-4 space-y-4">
-                    {/* Actions */}
-                    <div className="flex gap-2">
-                        <button onClick={() => setShowAddModal(true)} className="flex items-center gap-1.5 text-sm px-4 py-2.5 rounded-xl font-bold transition-all active:scale-95 text-white shadow-lg shadow-cafe-500/20" style={{ background: 'linear-gradient(135deg, #C4886D, #D4A76A)' }}>
-                            <Plus className="w-4 h-4" />
-                            إضافة طاولة
-                        </button>
-                        <button onClick={handlePrint} className="flex items-center gap-1.5 text-sm px-4 py-2.5 rounded-xl font-bold transition-all active:scale-95 text-white/50 hover:text-white border border-white/10 hover:border-white/20 hover:bg-white/5">
-                            <Printer className="w-4 h-4" />
-                            طباعة / حفظ كـ PDF
-                        </button>
-                    </div>
-
-                    {/* Tables grid */}
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-                        {tables.map((table, i) => (
-                            <div
-                                key={table.id}
-                                className={`card-admin text-center p-4 animate-fade-in ${!table.isActive ? "opacity-40" : ""}`}
-                                style={{ animationDelay: `${i * 50}ms` }}
-                            >
-                                {qrImages[table.number] && (
-                                    <div className="bg-white/[0.03] p-2.5 rounded-xl inline-block mb-3 border border-white/5">
-                                        <img src={qrImages[table.number]} alt={`QR طاولة ${table.number}`} className="w-28 h-28 md:w-36 md:h-36 object-contain mx-auto" />
-                                    </div>
-                                )}
-                                <p className="font-bold text-sm text-white/90">طاولة {table.number}</p>
-                                <p className="text-white/20 text-[10px] truncate mt-0.5 font-mono">{baseUrl}/t/{table.number}</p>
-                                <div className="flex items-center justify-center gap-1.5 mt-3">
-                                    <button
-                                        onClick={() => toggleTable(table)}
-                                        className={`text-[11px] px-2.5 py-1 rounded-lg font-medium flex items-center gap-1 transition-all ${table.isActive
-                                            ? "text-emerald-400 bg-emerald-500/10 border border-emerald-500/15 hover:bg-emerald-500/20"
-                                            : "text-red-400 bg-red-500/10 border border-red-500/15 hover:bg-red-500/20"
-                                            }`}
-                                    >
-                                        {table.isActive ? <Eye className="w-3 h-3" /> : <EyeOff className="w-3 h-3" />}
-                                        {table.isActive ? "فعال" : "معطل"}
-                                    </button>
-                                    <button
-                                        onClick={() => deleteTable(table)}
-                                        className="text-[11px] text-white/20 hover:text-red-400 px-2 py-1 rounded-lg hover:bg-red-500/10 transition-all"
-                                    >
-                                        <Trash2 className="w-3.5 h-3.5" />
-                                    </button>
+                <div className="max-w-md mx-auto px-4 mt-8">
+                    {loading ? (
+                        <div className="text-center py-20">
+                            <div className="animate-spin w-10 h-10 border-3 border-cafe-500/30 border-t-cafe-400 rounded-full mx-auto mb-4"></div>
+                            <p className="text-white/30 text-sm">جاري إنشاء الرمز...</p>
+                        </div>
+                    ) : (
+                        <div className="card-admin text-center p-6 animate-fade-in">
+                            {qrImage && (
+                                <div className="bg-white/[0.03] p-4 rounded-2xl inline-block mb-4 border border-white/5">
+                                    <img src={qrImage} alt="QR المنيو" className="w-56 h-56 md:w-64 md:h-64 object-contain mx-auto" />
                                 </div>
-                            </div>
-                        ))}
-                    </div>
+                            )}
+                            <p className="font-bold text-white/90">امسح لعرض القائمة</p>
+                            <p className="text-white/30 text-xs mt-1 font-mono break-all" dir="ltr">{SITE_URL}</p>
 
-                    {tables.length === 0 && (
-                        <div className="text-center py-16">
-                            <QrCode className="w-12 h-12 text-white/10 mx-auto mb-3" />
-                            <p className="text-white/30 text-sm">لا توجد طاولات — أضف طاولة جديدة</p>
+                            <div className="flex gap-2 mt-6">
+                                <button onClick={handleDownload} className="flex-1 flex items-center justify-center gap-1.5 text-sm px-4 py-3 rounded-xl font-bold transition-all active:scale-95 text-white shadow-lg shadow-cafe-500/20" style={{ background: 'linear-gradient(135deg, #C4886D, #D4A76A)' }}>
+                                    <Download className="w-4 h-4" />
+                                    تنزيل PNG
+                                </button>
+                                <button onClick={handlePrint} className="flex-1 flex items-center justify-center gap-1.5 text-sm px-4 py-3 rounded-xl font-bold transition-all active:scale-95 text-white/50 hover:text-white border border-white/10 hover:border-white/20 hover:bg-white/5">
+                                    <Printer className="w-4 h-4" />
+                                    طباعة
+                                </button>
+                            </div>
                         </div>
                     )}
                 </div>
-
-                {/* Add Table Modal */}
-                {showAddModal && (
-                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={() => setShowAddModal(false)}>
-                        <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
-                        <div className="relative w-full max-w-sm card-admin p-5 space-y-4 animate-scale-in" onClick={e => e.stopPropagation()}>
-                            <div className="flex items-center justify-between">
-                                <h3 className="text-white font-bold">إضافة طاولة</h3>
-                                <button onClick={() => setShowAddModal(false)} className="text-white/30 hover:text-white p-1"><X className="w-5 h-5" /></button>
-                            </div>
-                            <input
-                                type="number" placeholder="رقم الطاولة" value={newTableNum}
-                                onChange={(e) => setNewTableNum(e.target.value)} autoFocus
-                                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-white/20 focus:outline-none focus:border-cafe-400/50 transition-all"
-                            />
-                            <div className="flex gap-2 pt-2">
-                                <button onClick={addTable} className="flex-1 text-white py-3 rounded-xl font-bold text-sm active:scale-[0.97] transition-all shadow-lg shadow-cafe-500/20" style={{ background: 'linear-gradient(135deg, #C4886D, #D4A76A)' }}>
-                                    إضافة
-                                </button>
-                                <button onClick={() => setShowAddModal(false)} className="px-6 py-3 rounded-xl text-white/40 hover:text-white hover:bg-white/5 transition-all text-sm">
-                                    إلغاء
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                )}
             </div>
 
             {/* Print view */}
-            <div className="hidden print:block" ref={printRef}>
+            <div className="hidden print:block">
                 <style>{`
                     @media print {
                         @page { margin: 0; }
                         body { background: white !important; color: black !important; padding: 10mm; }
                     }
                 `}</style>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "15mm", padding: "5mm" }}>
-                    {tables.filter((t) => t.isActive).map((table) => (
-                        <div key={table.id} style={{ textAlign: "center", pageBreakInside: "avoid", border: "2px solid #ddd", borderRadius: "12px", padding: "8mm" }}>
-                            <p style={{ fontSize: "24px", fontWeight: "bold", color: "#be185d", marginBottom: "2mm", letterSpacing: "1px" }}>منـــيـــو</p>
-
-                            {qrImages[table.number] && (
-                                <img src={qrImages[table.number]} alt="" style={{ width: "100%", maxWidth: "180px", margin: "0 auto" }} />
-                            )}
-
-                            <p style={{ fontSize: "24px", fontWeight: "bold", color: "#be185d", marginTop: "2mm", letterSpacing: "1px" }}>Menu</p>
-
-                            <p style={{ fontSize: "20px", fontWeight: "bold", color: "#3D2214", marginTop: "4mm" }}>طاولة {table.number}</p>
-                        </div>
-                    ))}
+                <div style={{ textAlign: "center", padding: "20mm 5mm" }}>
+                    <p style={{ fontSize: "32px", fontWeight: "bold", color: "#be185d", marginBottom: "4mm", letterSpacing: "1px" }}>منـــيـــو</p>
+                    {qrImage && (
+                        <img src={qrImage} alt="" style={{ width: "100%", maxWidth: "300px", margin: "0 auto" }} />
+                    )}
+                    <p style={{ fontSize: "32px", fontWeight: "bold", color: "#be185d", marginTop: "4mm", letterSpacing: "1px" }}>Menu</p>
+                    <p style={{ fontSize: "20px", fontWeight: "bold", color: "#3D2214", marginTop: "6mm" }}>Rose Cafe · روز كافيه</p>
                 </div>
             </div>
         </>

@@ -40,13 +40,13 @@ interface Category {
     items: MenuItem[];
 }
 
-export default function MenuPage({ tableNumber }: { tableNumber: number }) {
+export default function MenuView({ tableNumber }: { tableNumber?: number }) {
     return (
         <MenuContent tableNumber={tableNumber} />
     );
 }
 
-function MenuContent({ tableNumber }: { tableNumber: number }) {
+function MenuContent({ tableNumber }: { tableNumber?: number }) {
     const [categories, setCategories] = useState<Category[]>([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState("");
@@ -113,18 +113,20 @@ function MenuContent({ tableNumber }: { tableNumber: number }) {
                 <header className="sticky top-0 z-40 glass" style={{ borderBottom: '1px solid rgba(196,136,109,0.1)' }}>
                     <div className="px-4 pt-4 pb-3">
                         <div className="flex flex-col items-center justify-center mb-5 relative">
-                            <div className="absolute left-0 top-0">
-                                <div className="px-3 py-1.5 rounded-xl text-sm font-extrabold text-white shadow-warm" style={{ background: 'linear-gradient(135deg, #E88C9A, #C85A75)' }}>
-                                    طاولة {tableNumber}
+                            {tableNumber != null && (
+                                <div className="absolute left-0 top-0">
+                                    <div className="px-3 py-1.5 rounded-xl text-sm font-extrabold text-white shadow-warm" style={{ background: 'linear-gradient(135deg, #E88C9A, #C85A75)' }}>
+                                        طاولة {tableNumber}
+                                    </div>
                                 </div>
-                            </div>
+                            )}
 
 
                             <div className="w-24 h-24 rounded-full overflow-hidden shadow-warm border-2 border-white/60 mb-3 relative z-10" style={{ backgroundColor: '#FFF' }}>
                                 <img src="/images/logo.png" alt="Rose Cafe" className="w-full h-full object-cover" />
                             </div>
                             <h1 className="text-2xl font-extrabold tracking-wide relative z-10" style={{ color: '#9d3b54' }}>Rose Cafe</h1>
-                            <p className="text-sm font-semibold mt-1 relative z-10" style={{ color: '#d1899a' }}>روز كافيه · اطلب من طاولتك</p>
+                            <p className="text-sm font-semibold mt-1 relative z-10" style={{ color: '#d1899a' }}>روز كافيه · قائمة الطعام</p>
                         </div>
 
                         {/* Search */}
